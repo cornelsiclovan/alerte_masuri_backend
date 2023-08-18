@@ -66,6 +66,10 @@ const Dosar = sequelize.define("dosar", {
   tip_solutie: {
     type: Sequelize.STRING,
     allowNull: true
+  },
+  tip_solutie_propusa: {
+    type: Sequelize.STRING,
+    allowNull: true
   }
 });
 

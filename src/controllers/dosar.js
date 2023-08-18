@@ -72,6 +72,9 @@ exports.getDosare = async (req, res, next) => {
           numeProcuror: numeProcuror,
           isInterceptari: dosar.isInterceptari,
           data_interceptari: dosar.data_interceptari,
+          tip_solutie_propusa: dosar.tip_solutie_propusa,
+          tip_solutie: dosar.tip_solutie,
+          este_solutionat: dosar.este_solutionat
         };
       })
     );
@@ -177,6 +180,7 @@ exports.addDosar = async (req, res, next) => {
     const data_cj = req.body.data_cj;
     const procurorId = req.body.procurorId;
     const data_interceptari = req.body.data_interceptari;
+    const tip_solutie_propusa = req.body.tip_solutie_propusa;
 
     let isSechestru = false; // type === "1";
     let isArest = false; //type === "2";
@@ -212,6 +216,7 @@ exports.addDosar = async (req, res, next) => {
       data_interceptari: data_interceptari,
       userId: req.userId,
       procurorId: procurorId,
+      tip_solutie_propusa: tip_solutie_propusa
     });
 
     res.status(200).json({
@@ -240,8 +245,8 @@ exports.editDosar = async (req, res, next) => {
   const este_solutionat = req.body.este_solutionat === "true" ? 1 : 0;
   const data_interceptari = req.body.data_interceptari;
   const tip_solutie = req.body.tip_solutie;
+  const tip_solutie_propusa = req.body.tip_solutie_propusa;
 
-  console.log("este solutionat", este_solutionat);
 
   try {
     if (!errors.isEmpty) {
@@ -274,6 +279,7 @@ exports.editDosar = async (req, res, next) => {
     dosar.este_solutionat = este_solutionat || 0;
     dosar.data_interceptari = data_interceptari || null;
     dosar.tip_solutie = tip_solutie;
+    dosar.tip_solutie_propusa = tip_solutie_propusa;
 
     if (data_sechestru) {
       dosar.isSechestru = true;
