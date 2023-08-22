@@ -13,9 +13,7 @@ router.post(
   "/",
   isAuth,
   [
-    body("numar").trim().isLength({ min: 3 }),
-    body("data").trim().notEmpty(),
-    body("type").trim().notEmpty(),
+    body("numar").trim().isLength({ min: 3 })
   ],
   dosarController.addDosar
 );

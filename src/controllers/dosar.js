@@ -168,10 +168,6 @@ exports.addDosar = async (req, res, next) => {
       throw error;
     }
 
-    // id = 1 - sechestru
-    // id = 2 - arest
-    // id = 3 - control judiciar
-
     const numar = req.body.numar;
     const type = req.body.type;
     const data = req.body.data;
@@ -182,9 +178,9 @@ exports.addDosar = async (req, res, next) => {
     const data_interceptari = req.body.data_interceptari;
     const tip_solutie_propusa = req.body.tip_solutie_propusa;
 
-    let isSechestru = false; // type === "1";
-    let isArest = false; //type === "2";
-    let isControlJudiciar = false; //type === "3";
+    let isSechestru = false; 
+    let isArest = false; 
+    let isControlJudiciar = false; 
     let isInterceptari = false;
 
     if (data_sechestru) {
@@ -269,8 +265,9 @@ exports.editDosar = async (req, res, next) => {
       throw error;
     }
 
+
     dosar.numar = numar || dosar.numar;
-    dosar.data = data || dosar.data;
+    dosar.data = data;
     dosar.data_sechestru = data_sechestru || null;
     dosar.data_arest = data_arest || null;
     dosar.data_cj = data_cj || null;
@@ -280,6 +277,10 @@ exports.editDosar = async (req, res, next) => {
     dosar.data_interceptari = data_interceptari || null;
     dosar.tip_solutie = tip_solutie;
     dosar.tip_solutie_propusa = tip_solutie_propusa;
+
+    if(este_solutionat === 0) {
+      dosar.tip_solutie = null
+    }
 
     if (data_sechestru) {
       dosar.isSechestru = true;

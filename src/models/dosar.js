@@ -29,7 +29,7 @@ const Dosar = sequelize.define("dosar", {
   },
   data: {
     type: Sequelize.DATE,
-    allowNull: false,
+    allowNull: true,
   },
   data_arest: {
     type: Sequelize.DATE,
