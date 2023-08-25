@@ -74,7 +74,7 @@ exports.getDosare = async (req, res, next) => {
           data_interceptari: dosar.data_interceptari,
           tip_solutie_propusa: dosar.tip_solutie_propusa,
           tip_solutie: dosar.tip_solutie,
-          este_solutionat: dosar.este_solutionat
+          este_solutionat: dosar.este_solutionat,
         };
       })
     );
@@ -168,19 +168,21 @@ exports.addDosar = async (req, res, next) => {
       throw error;
     }
 
-    const numar = req.body.numar;
+    const numar = req.body.numar_dosar;
     const type = req.body.type;
-    const data = req.body.data;
+    let data = req.body.data_inceperii;
     const data_sechestru = req.body.data_sechestru;
     const data_arest = req.body.data_arest;
     const data_cj = req.body.data_cj;
-    const procurorId = req.body.procurorId;
+    const procurorId = req.body.id_procuror;
     const data_interceptari = req.body.data_interceptari;
     const tip_solutie_propusa = req.body.tip_solutie_propusa;
 
-    let isSechestru = false; 
-    let isArest = false; 
-    let isControlJudiciar = false; 
+    const procuror_nume = req.body.nume + " " + req.body.prenume;
+
+    let isSechestru = false;
+    let isArest = false;
+    let isControlJudiciar = false;
     let isInterceptari = false;
 
     if (data_sechestru) {
@@ -199,6 +201,22 @@ exports.addDosar = async (req, res, next) => {
       isInterceptari = true;
     }
 
+    const data1 = data.split(" ")[0];
+    const day = data1.split(".")[0];
+    const month = data1.split(".")[1];
+    const year = data1.split(".")[2];
+
+    data = year + "-" + month + "-" + day;
+
+    /// 2023-08-01 corect
+    /// 01.09.2022
+
+    await Dosar.destroy({
+      where: {
+        numar: numar
+      }
+    })
+
     const dosar = await Dosar.create({
       numar: numar,
       data: data,
@@ -212,13 +230,28 @@ exports.addDosar = async (req, res, next) => {
       data_interceptari: data_interceptari,
       userId: req.userId,
       procurorId: procurorId,
-      tip_solutie_propusa: tip_solutie_propusa
+      tip_solutie_propusa: tip_solutie_propusa,
     });
+
+    const procuror = await User.findByPk(procurorId);
+
+    if (!procuror) {
+      await User.create({
+        id: procurorId,
+        name: procuror_nume,
+        email: req.body.nume,
+        isProcuror: 1,
+        password: "1234",
+        repeatPassword: req.body.prenume,
+      });
+    }
 
     res.status(200).json({
       dosar: dosar,
     });
   } catch (err) {
+    console.log(err);
+
     if (!err.statusCode) {
       err.statusCode = 404;
     }
@@ -243,7 +276,6 @@ exports.editDosar = async (req, res, next) => {
   const tip_solutie = req.body.tip_solutie;
   const tip_solutie_propusa = req.body.tip_solutie_propusa;
 
-
   try {
     if (!errors.isEmpty) {
       const error = new Error("Datele introduse nu sunt corecte!");
@@ -265,7 +297,6 @@ exports.editDosar = async (req, res, next) => {
       throw error;
     }
 
-
     dosar.numar = numar || dosar.numar;
     dosar.data = data;
     dosar.data_sechestru = data_sechestru || null;
@@ -278,8 +309,8 @@ exports.editDosar = async (req, res, next) => {
     dosar.tip_solutie = tip_solutie;
     dosar.tip_solutie_propusa = tip_solutie_propusa;
 
-    if(este_solutionat === 0) {
-      dosar.tip_solutie = null
+    if (este_solutionat === 0) {
+      dosar.tip_solutie = null;
     }
 
     if (data_sechestru) {
