@@ -169,13 +169,16 @@ exports.addDosar = async (req, res, next) => {
     }
 
     let data;
+    let days_remaining = null;
 
     if (req.body.data_inceperii) {
       data = req.body.data_inceperii;
+   
     }
 
     if (req.body.data_expirarii_mandat) {
       data = req.body.data_expirarii_mandat;
+      days_remaining = req.body.days_remaining;
     }
 
     let numar;
@@ -228,7 +231,7 @@ exports.addDosar = async (req, res, next) => {
     }
 
 
-    console.log("dataaaaaaaaaaaaa   ",data);
+    console.log("daysREmaining  ",days_remaining);
     
 
     /// 2023-08-01 corect
@@ -254,6 +257,7 @@ exports.addDosar = async (req, res, next) => {
       userId: req.userId,
       procurorId: procurorId,
       tip_solutie_propusa: tip_solutie_propusa,
+      days_remaining: days_remaining
     });
 
     const procuror = await User.findByPk(procurorId);
@@ -267,6 +271,8 @@ exports.addDosar = async (req, res, next) => {
         password: "1234",
         repeatPassword: req.body.prenume,
       });
+    } else {
+      console.log("procuror exists")
     }
 
     res.status(200).json({

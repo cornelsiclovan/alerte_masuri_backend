@@ -70,6 +70,10 @@ const Dosar = sequelize.define("dosar", {
   tip_solutie_propusa: {
     type: Sequelize.STRING,
     allowNull: true
+  },
+  days_remaining: {
+    type: Sequelize.INTEGER,
+    allowNull: true
   }
 });
 
