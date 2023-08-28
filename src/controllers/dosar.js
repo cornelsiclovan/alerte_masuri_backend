@@ -266,7 +266,7 @@ exports.addDosar = async (req, res, next) => {
       await User.create({
         id: procurorId,
         name: procuror_nume,
-        email: req.body.nume,
+        email: "proc" + procurorId,
         isProcuror: 1,
         password: "1234",
         repeatPassword: req.body.prenume,
