@@ -168,9 +168,26 @@ exports.addDosar = async (req, res, next) => {
       throw error;
     }
 
-    const numar = req.body.numar_dosar;
+    let data;
+
+    if (req.body.data_inceperii) {
+      data = req.body.data_inceperii;
+    }
+
+    if (req.body.data_expirarii_mandat) {
+      data = req.body.data_expirarii_mandat;
+    }
+
+    let numar;
+
+    if (req.body.data_expirarii_mandat) {
+      numar = req.body.numar;
+    } else {
+      numar = req.body.numar_dosar;
+    }
+
     const type = req.body.type;
-    let data = req.body.data_inceperii;
+    
     const data_sechestru = req.body.data_sechestru;
     const data_arest = req.body.data_arest;
     const data_cj = req.body.data_cj;
@@ -189,11 +206,11 @@ exports.addDosar = async (req, res, next) => {
       isSechestru = true;
     }
 
-    if (data_arest) {
+    if (req.body.data_expirarii_mandat) {
       isArest = true;
     }
 
-    if (data_cj) {
+    if (req.body.data_expirarii_mandat) {
       isControlJudiciar = true;
     }
 
@@ -201,21 +218,27 @@ exports.addDosar = async (req, res, next) => {
       isInterceptari = true;
     }
 
-    const data1 = data.split(" ")[0];
-    const day = data1.split(".")[0];
-    const month = data1.split(".")[1];
-    const year = data1.split(".")[2];
+    if (!req.body.data_expirarii_mandat) {
+      const data1 = data.split(" ")[0];
+      const day = data1.split(".")[0];
+      const month = data1.split(".")[1];
+      const year = data1.split(".")[2];
 
-    data = year + "-" + month + "-" + day;
+      data = year + "-" + month + "-" + day;
+    }
+
+
+    console.log("dataaaaaaaaaaaaa   ",data);
+    
 
     /// 2023-08-01 corect
     /// 01.09.2022
 
     await Dosar.destroy({
       where: {
-        numar: numar
-      }
-    })
+        numar: numar,
+      },
+    });
 
     const dosar = await Dosar.create({
       numar: numar,
