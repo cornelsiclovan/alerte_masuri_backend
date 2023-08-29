@@ -75,6 +75,7 @@ exports.getDosare = async (req, res, next) => {
           tip_solutie_propusa: dosar.tip_solutie_propusa,
           tip_solutie: dosar.tip_solutie,
           este_solutionat: dosar.este_solutionat,
+          days_remaining: dosar.days_remaining
         };
       })
     );
