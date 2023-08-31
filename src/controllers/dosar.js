@@ -158,6 +158,26 @@ exports.getDosareByCategory = async (req, res, next) => {
   }
 };
 
+exports.cleanDataBaseDosar = async (req, res, next) => {
+  await Dosar.destroy({
+    where: {isControlJudiciar: "0"}
+  })
+
+  res.status(200).json({
+    message: "clean dosare",
+  });
+}
+
+exports.cleanDataBaseMasuri = async (req, res, next) => {
+  await Dosar.destroy({
+    where: {isControlJudiciar: "1"}
+  })
+
+  res.status(200).json({
+    message: "clean masuri",
+  });
+}
+
 exports.addDosar = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -238,11 +258,11 @@ exports.addDosar = async (req, res, next) => {
     /// 2023-08-01 corect
     /// 01.09.2022
 
-    await Dosar.destroy({
-      where: {
-        numar: numar,
-      },
-    });
+    // await Dosar.destroy({
+    //   where: {
+    //     numar: numar,
+    //   },
+    // });
 
     const dosar = await Dosar.create({
       numar: numar,

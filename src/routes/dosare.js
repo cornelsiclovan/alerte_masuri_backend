@@ -12,11 +12,12 @@ router.get("/:dosarId", isAuth, dosarController.getDosarById);
 router.post(
   "/",
   isAuth,
-  [
-    body("numar").trim().isLength({ min: 3 })
-  ],
+  [body("numar").trim().isLength({ min: 3 })],
   dosarController.addDosar
 );
+
+router.post("/cleanMasuri", isAuth, dosarController.cleanDataBaseMasuri);
+router.post("/cleanDosare", isAuth, dosarController.cleanDataBaseDosar);
 
 router.patch("/:dosarId", isAuth, dosarController.editDosar);
 
