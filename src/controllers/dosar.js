@@ -75,7 +75,8 @@ exports.getDosare = async (req, res, next) => {
           tip_solutie_propusa: dosar.tip_solutie_propusa,
           tip_solutie: dosar.tip_solutie,
           este_solutionat: dosar.este_solutionat,
-          days_remaining: dosar.days_remaining
+          days_remaining: dosar.days_remaining,
+          data_inceperii_la_procuror: dosar.data_inceperii_la_procuror,
         };
       })
     );
@@ -160,23 +161,23 @@ exports.getDosareByCategory = async (req, res, next) => {
 
 exports.cleanDataBaseDosar = async (req, res, next) => {
   await Dosar.destroy({
-    where: {isControlJudiciar: "0"}
-  })
+    where: { isControlJudiciar: "0" },
+  });
 
   res.status(200).json({
     message: "clean dosare",
   });
-}
+};
 
 exports.cleanDataBaseMasuri = async (req, res, next) => {
   await Dosar.destroy({
-    where: {isControlJudiciar: "1"}
-  })
+    where: { isControlJudiciar: "1" },
+  });
 
   res.status(200).json({
     message: "clean masuri",
   });
-}
+};
 
 exports.addDosar = async (req, res, next) => {
   const errors = validationResult(req);
@@ -194,7 +195,6 @@ exports.addDosar = async (req, res, next) => {
 
     if (req.body.data_inceperii) {
       data = req.body.data_inceperii;
-   
     }
 
     if (req.body.data_expirarii_mandat) {
@@ -211,13 +211,20 @@ exports.addDosar = async (req, res, next) => {
     }
 
     const type = req.body.type;
-    
+
+    const data_inceperii_la_procuror = req.body.data_inceperii_la_procuror;
     const data_sechestru = req.body.data_sechestru;
     const data_arest = req.body.data_arest;
     const data_cj = req.body.data_cj;
     const procurorId = req.body.id_procuror;
     const data_interceptari = req.body.data_interceptari;
-    const tip_solutie_propusa = req.body.tip_solutie_propusa;
+    let tip_solutie_propusa = req.body.tip_solutie_propusa;
+
+    if(tip_solutie_propusa && tip_solutie_propusa.includes("cu propunere de")) {
+      tip_solutie_propusa = tip_solutie_propusa.split("cu propunere de")[1];
+    }else {
+      tip_solutie_propusa = "";
+    }
 
     const procuror_nume = req.body.nume + " " + req.body.prenume;
 
@@ -251,9 +258,7 @@ exports.addDosar = async (req, res, next) => {
       data = year + "-" + month + "-" + day;
     }
 
-
-    console.log("daysREmaining  ",days_remaining);
-    
+    console.log("daysREmaining  ", days_remaining);
 
     /// 2023-08-01 corect
     /// 01.09.2022
@@ -261,7 +266,7 @@ exports.addDosar = async (req, res, next) => {
     await Dosar.destroy({
       where: {
         numar: numar,
-        isControlJudiciar: "0"
+        isControlJudiciar: "0",
       },
     });
 
@@ -279,7 +284,8 @@ exports.addDosar = async (req, res, next) => {
       userId: req.userId,
       procurorId: procurorId,
       tip_solutie_propusa: tip_solutie_propusa,
-      days_remaining: days_remaining
+      days_remaining: days_remaining,
+      data_inceperii_la_procuror: data_inceperii_la_procuror,
     });
 
     const procuror = await User.findByPk(procurorId);
@@ -294,7 +300,7 @@ exports.addDosar = async (req, res, next) => {
         repeatPassword: req.body.prenume,
       });
     } else {
-      console.log("procuror exists")
+      console.log("procuror exists");
     }
 
     res.status(200).json({

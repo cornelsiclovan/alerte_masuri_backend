@@ -74,6 +74,10 @@ const Dosar = sequelize.define("dosar", {
   days_remaining: {
     type: Sequelize.INTEGER,
     allowNull: true
+  },
+  data_inceperii_la_procuror: {
+    type: Sequelize.DATE,
+    allowNull: true
   }
 });
 
