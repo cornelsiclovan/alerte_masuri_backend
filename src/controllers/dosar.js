@@ -261,6 +261,7 @@ exports.addDosar = async (req, res, next) => {
     await Dosar.destroy({
       where: {
         numar: numar,
+        isControlJudiciar: "0"
       },
     });
 
