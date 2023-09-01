@@ -258,11 +258,11 @@ exports.addDosar = async (req, res, next) => {
     /// 2023-08-01 corect
     /// 01.09.2022
 
-    // await Dosar.destroy({
-    //   where: {
-    //     numar: numar,
-    //   },
-    // });
+    await Dosar.destroy({
+      where: {
+        numar: numar,
+      },
+    });
 
     const dosar = await Dosar.create({
       numar: numar,
