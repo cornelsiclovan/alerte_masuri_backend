@@ -258,6 +258,18 @@ exports.addDosar = async (req, res, next) => {
       data = year + "-" + month + "-" + day;
     }
 
+    if (req.body.data_expirarii_mandat) {
+      const data1 = data.split(" ")[0];
+      const day = data1.split(".")[0];
+      const month = data1.split(".")[1];
+      const year = data1.split(".")[2];
+
+      data = data1;
+    }
+
+
+    console.log(data);
+
     console.log("daysREmaining  ", days_remaining);
 
     /// 2023-08-01 corect
