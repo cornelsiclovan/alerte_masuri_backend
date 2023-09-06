@@ -169,6 +169,16 @@ exports.cleanDataBaseDosar = async (req, res, next) => {
   });
 };
 
+exports.cleanDataBaseSechestru = async (req, res, next) => {
+  await Dosar.destroy({
+    where: { isSechestru: "1" },
+  });
+
+  res.status(200).json({
+    message: "clean sechestru",
+  });
+}
+
 exports.cleanDataBaseMasuri = async (req, res, next) => {
   await Dosar.destroy({
     where: { isControlJudiciar: "1" },
@@ -193,6 +203,8 @@ exports.addDosar = async (req, res, next) => {
     let data;
     let days_remaining = null;
 
+    
+
     if (req.body.data_inceperii) {
       data = req.body.data_inceperii;
     }
@@ -204,11 +216,19 @@ exports.addDosar = async (req, res, next) => {
 
     let numar;
 
+    
     if (req.body.data_expirarii_mandat) {
       numar = req.body.numar;
     } else {
       numar = req.body.numar_dosar;
     }
+
+    if(req.body.date_undertaking) {
+      data = req.body.date_undertaking;
+      days_remaining = req.body.days_remaining;
+      numar = req.body.numar;
+    }
+
 
     const type = req.body.type;
 
@@ -243,6 +263,10 @@ exports.addDosar = async (req, res, next) => {
 
     if (req.body.data_expirarii_mandat) {
       isControlJudiciar = true;
+    }
+
+    if (req.body.date_undertaking) {
+      isSechestru = true;
     }
 
     if (data_interceptari) {

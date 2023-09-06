@@ -18,6 +18,7 @@ router.post(
 
 router.post("/cleanMasuri", isAuth, dosarController.cleanDataBaseMasuri);
 router.post("/cleanDosare", isAuth, dosarController.cleanDataBaseDosar);
+router.post("/cleanSechestru", isAuth, dosarController.cleanDataBaseSechestru);
 
 router.patch("/:dosarId", isAuth, dosarController.editDosar);
 
