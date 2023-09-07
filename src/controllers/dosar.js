@@ -161,7 +161,7 @@ exports.getDosareByCategory = async (req, res, next) => {
 
 exports.cleanDataBaseDosar = async (req, res, next) => {
   await Dosar.destroy({
-    where: { isControlJudiciar: "0" },
+    where: { isControlJudiciar: "0", isSechestru: "0" },
   });
 
   res.status(200).json({
@@ -246,6 +246,7 @@ exports.addDosar = async (req, res, next) => {
       tip_solutie_propusa = "";
     }
 
+
     const procuror_nume = req.body.nume + " " + req.body.prenume;
 
     let isSechestru = false;
@@ -299,12 +300,9 @@ exports.addDosar = async (req, res, next) => {
     /// 2023-08-01 corect
     /// 01.09.2022
 
-    await Dosar.destroy({
-      where: {
-        numar: numar,
-        isControlJudiciar: "0",
-      },
-    });
+    if(req.body.invest_proprie === 'True') {
+      tip_solutie_propusa = "UPP"
+    }
 
     const dosar = await Dosar.create({
       numar: numar,
