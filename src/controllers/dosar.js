@@ -346,7 +346,7 @@ exports.addDosar = async (req, res, next) => {
       tip_solutie_propusa.includes("cu propunere de")
     ) {
       tip_solutie_propusa = tip_solutie_propusa.split("cu propunere de")[1];
-      tip_solutie_propusa = tip_solutie_propusa.split(" ")[0];
+      // tip_solutie_propusa = tip_solutie_propusa.split(" ")[0];
     } else {
       tip_solutie_propusa = "";
     }
