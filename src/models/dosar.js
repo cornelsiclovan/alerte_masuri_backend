@@ -47,7 +47,7 @@ const Dosar = sequelize.define("dosar", {
   },
   procurorId: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     defaultValue: null,
   },
   este_solutionat: {
@@ -78,7 +78,22 @@ const Dosar = sequelize.define("dosar", {
   data_inceperii_la_procuror: {
     type: Sequelize.DATE,
     allowNull: true
+  },
+  data_primei_sesizari: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
+  prima_institutie_sesizata: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  institutia_curenta: {
+    type: Sequelize.STRING,
+    allowNull: true
   }
+},  {
+  charset: 'utf8',
+  collate: 'utf8_unicode_ci'
 });
 
 module.exports = Dosar;

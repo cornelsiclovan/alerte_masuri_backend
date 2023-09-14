@@ -1,6 +1,80 @@
 const { validationResult } = require("express-validator");
 const Dosar = require("../models/dosar");
 const User = require("../models/user");
+const Sequelize = require('sequelize');
+
+const op = Sequelize.Op;
+
+
+
+exports.getDosareCuAc = async(req, res, next) => {
+  let dosare = [];
+  let totalItems = 0;
+  let queryObject = { institutia_curenta: {[op.ne]: null}};
+
+  let procurorId = req.query.procurorId;
+  let isAdmin = req.query.isAdmin;
+
+  if (!procurorId && isAdmin !== "1") {
+    queryObject.userId = req.userId;
+  }
+
+  if (procurorId === "1") {
+    queryObject.procurorId = req.userId;
+  }
+
+  try {
+    dosare = await Dosar.findAll({ where: queryObject });
+    totalItems = dosare.length;
+    console.log("ok")
+    let dosareToSend = await Promise.all(
+      dosare.map(async (dosar) => {
+        const procuror = await User.findByPk(dosar.procurorId);
+        let numeProcuror = "null";
+        if(procuror){
+          numeProcuror = procuror.name;
+        }
+
+        return {
+          id: dosar.id,
+          numar: dosar.numar,
+          isControlJudiciar: dosar.isControlJudiciar,
+          isArest: dosar.isArest,
+          isSechestru: dosar.isSechestru,
+          data: dosar.data,
+          userId: dosar.userId,
+          data_arest: dosar.data_arest,
+          data_cj: dosar.data_cj,
+          data_sechestru: dosar.data_sechestru,
+          procurorId: dosar.procurorId,
+          este_solutionat: dosar.este_solutionat,
+          numeProcuror: numeProcuror,
+          isInterceptari: dosar.isInterceptari,
+          data_interceptari: dosar.data_interceptari,
+          tip_solutie_propusa: dosar.tip_solutie_propusa,
+          tip_solutie: dosar.tip_solutie,
+          este_solutionat: dosar.este_solutionat,
+          days_remaining: dosar.days_remaining,
+          data_inceperii_la_procuror: dosar.data_inceperii_la_procuror,
+          data_primei_sesizari: dosar.data_primei_sesizari,
+          prima_institutie_sesizata: dosar.prima_institutie_sesizata,
+          institutia_curenta: dosar.institutia_curenta,
+        };
+      })
+    );
+
+    let sortedDosare = dosareToSend.sort(
+      (a, b) => new Date(a.data) - new Date(b.data)
+      // new Date(a.data).getTime() < new Date(b.data).getTime ? 1 : -1
+    );
+
+    res.status(200).json({ dosare: sortedDosare, totalItems: totalItems });
+    
+  }  catch(error) {
+    next(error);
+  } 
+
+}
 
 exports.getDosare = async (req, res, next) => {
   let dosare = [];
@@ -12,7 +86,8 @@ exports.getDosare = async (req, res, next) => {
   let isAdmin = req.query.isAdmin;
   let este_solutionat = req.query.este_solutionat;
 
-  let queryObject = {};
+
+  let queryObject = { institutia_curenta: null};
 
   if (dosar_name) {
     queryObject.name = dosar_name;
@@ -55,7 +130,10 @@ exports.getDosare = async (req, res, next) => {
     let dosareToSend = await Promise.all(
       dosare.map(async (dosar) => {
         const procuror = await User.findByPk(dosar.procurorId);
-        const numeProcuror = procuror.name;
+        let numeProcuror = "null";
+        if(procuror){
+          numeProcuror = procuror.name;
+        }
         return {
           id: dosar.id,
           numar: dosar.numar,
@@ -77,6 +155,9 @@ exports.getDosare = async (req, res, next) => {
           este_solutionat: dosar.este_solutionat,
           days_remaining: dosar.days_remaining,
           data_inceperii_la_procuror: dosar.data_inceperii_la_procuror,
+          data_primei_sesizari: dosar.data_primei_sesizari,
+          prima_institutie_sesizata: dosar.prima_institutie_sesizata,
+          institutia_curenta: dosar.institutia_curenta,
         };
       })
     );
@@ -159,9 +240,19 @@ exports.getDosareByCategory = async (req, res, next) => {
   }
 };
 
+exports.cleanDataBaseCuAc = async (req, res, next) => {
+  await Dosar.destroy({
+    where: {institutia_curenta: {[op.ne]: null}}
+  });
+
+  res.status(200).json({
+    message: "clean dosare ac",
+  });
+}
+
 exports.cleanDataBaseDosar = async (req, res, next) => {
   await Dosar.destroy({
-    where: { isControlJudiciar: "0", isSechestru: "0" },
+    where: { isControlJudiciar: "0", isSechestru: "0", institutia_curenta: null },
   });
 
   res.status(200).json({
@@ -177,7 +268,7 @@ exports.cleanDataBaseSechestru = async (req, res, next) => {
   res.status(200).json({
     message: "clean sechestru",
   });
-}
+};
 
 exports.cleanDataBaseMasuri = async (req, res, next) => {
   await Dosar.destroy({
@@ -203,10 +294,12 @@ exports.addDosar = async (req, res, next) => {
     let data;
     let days_remaining = null;
 
-    
-
     if (req.body.data_inceperii) {
       data = req.body.data_inceperii;
+    }
+
+    if (req.body.data_sesizarii_primei) {
+      data = req.body.data_sesizarii_primei;
     }
 
     if (req.body.data_expirarii_mandat) {
@@ -216,19 +309,17 @@ exports.addDosar = async (req, res, next) => {
 
     let numar;
 
-    
     if (req.body.data_expirarii_mandat) {
       numar = req.body.numar;
     } else {
       numar = req.body.numar_dosar;
     }
 
-    if(req.body.date_undertaking) {
+    if (req.body.date_undertaking) {
       data = req.body.date_undertaking;
       days_remaining = req.body.days_remaining;
       numar = req.body.numar;
     }
-
 
     const type = req.body.type;
 
@@ -240,12 +331,25 @@ exports.addDosar = async (req, res, next) => {
     const data_interceptari = req.body.data_interceptari;
     let tip_solutie_propusa = req.body.tip_solutie_propusa;
 
-    if(tip_solutie_propusa && tip_solutie_propusa.includes("cu propunere de")) {
+    const data_primei_sesizari = req.body.data_sesizarii_primei || null;
+    
+    
+    const prima_institutie_sesizata = req.body.prima_institutie_sesizata || null;
+
+    console.log(prima_institutie_sesizata);
+
+
+    let institutia_curenta = req.body.institutia_curenta || null;
+
+    if (
+      tip_solutie_propusa &&
+      tip_solutie_propusa.includes("cu propunere de")
+    ) {
       tip_solutie_propusa = tip_solutie_propusa.split("cu propunere de")[1];
-    }else {
+      tip_solutie_propusa = tip_solutie_propusa.split(" ")[0];
+    } else {
       tip_solutie_propusa = "";
     }
-
 
     const procuror_nume = req.body.nume + " " + req.body.prenume;
 
@@ -280,7 +384,7 @@ exports.addDosar = async (req, res, next) => {
       const month = data1.split(".")[1];
       const year = data1.split(".")[2];
 
-      data = year + "-" + month + "-" + day;
+      data = data1;
     }
 
     if (req.body.data_expirarii_mandat) {
@@ -292,6 +396,14 @@ exports.addDosar = async (req, res, next) => {
       data = data1;
     }
 
+    if (req.body.data_sesizarii_primei) {
+      const data1 = data.split(" ")[0];
+      const month = data1.split("/")[0];
+      const day = data1.split(".")[1];
+      const year = data1.split(".")[2];
+
+      data = data1;
+    }
 
     console.log(data);
 
@@ -300,8 +412,8 @@ exports.addDosar = async (req, res, next) => {
     /// 2023-08-01 corect
     /// 01.09.2022
 
-    if(req.body.invest_proprie === 'True') {
-      tip_solutie_propusa = "UPP"
+    if (req.body.invest_proprie === "True") {
+      tip_solutie_propusa = "UPP";
     }
 
     const dosar = await Dosar.create({
@@ -320,6 +432,9 @@ exports.addDosar = async (req, res, next) => {
       tip_solutie_propusa: tip_solutie_propusa,
       days_remaining: days_remaining,
       data_inceperii_la_procuror: data_inceperii_la_procuror,
+      data_primei_sesizari: data,
+      prima_institutie_sesizata: prima_institutie_sesizata,
+      institutia_curenta: institutia_curenta,
     });
 
     const procuror = await User.findByPk(procurorId);

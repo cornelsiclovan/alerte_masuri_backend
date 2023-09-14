@@ -30,6 +30,8 @@ app.use((req, res, next) => {
 
 //Routing
 
+
+
 app.use("/dosar", dosRoutes);
 app.use("/user", userRoutes);
 app.use("/infractiuni", infractiuniRoutes);
@@ -57,9 +59,13 @@ User.hasMany(Dosar);
 // End Relations
 
 try {
-  sequelize.sync();
+  
+  //sequelize.sync({force: true});
+  sequelize.sync();        
 } catch (error) {
   console.log(error);
-}
+}  
+  
+
 
 app.listen(8080);

@@ -6,6 +6,8 @@ const dosarController = require("../controllers/dosar");
 const router = express.Router();
 
 router.get("/", isAuth, dosarController.getDosare);
+router.get("/dosareCuAc", isAuth, dosarController.getDosareCuAc);
+
 
 router.get("/:dosarId", isAuth, dosarController.getDosarById);
 
@@ -19,6 +21,7 @@ router.post(
 router.post("/cleanMasuri", isAuth, dosarController.cleanDataBaseMasuri);
 router.post("/cleanDosare", isAuth, dosarController.cleanDataBaseDosar);
 router.post("/cleanSechestru", isAuth, dosarController.cleanDataBaseSechestru);
+router.post("/cleanDosareCuAc", isAuth, dosarController.cleanDataBaseCuAc);
 
 router.patch("/:dosarId", isAuth, dosarController.editDosar);
 
