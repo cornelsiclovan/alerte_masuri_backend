@@ -11,6 +11,7 @@ const authRoutes = require("./src/routes/auth");
 const dosRoutes = require("./src/routes/dosare");
 const userRoutes = require("./src/routes/user");
 const infractiuniRoutes = require("./src/routes/infractiuni");
+const dateDosareSolutionateRoutes = require("./src/routes/dosare_solutionate");
 
 dotenv.config();
 const app = express();
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 app.use("/dosar", dosRoutes);
 app.use("/user", userRoutes);
 app.use("/infractiuni", infractiuniRoutes);
+app.use("/dateDosareSolutionate", dateDosareSolutionateRoutes);
 app.use(authRoutes);
 
 //End Routing
