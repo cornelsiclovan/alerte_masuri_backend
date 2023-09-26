@@ -7,13 +7,28 @@ exports.getDateDosare = async (req, res, next) => {
 
   queryObject = {};
 
+
+  let procurorId = req.query.procurorId;
+  let isAdmin = req.query.isAdmin;
+
+  if (!procurorId && isAdmin !== "1") {
+    queryObject.userId = req.userId;
+  }
+
+  if (procurorId === "1") {
+    queryObject.procurorId = req.userId;
+  }
+
+  
   try {
     dateDosare = await DosareSolutionate.findAll({ where: queryObject });
     totalItems = dateDosare.length;
 
+
+
     let dateDosareToSend = await Promise.all(
       dateDosare.map(async (itemData) => {
-        const procuror = await User.findByPk(dosar.procurorId);
+        const procuror = await User.findByPk(itemData.procurorId);
         let numeProcuror = "null";
         if (procuror) {
           numeProcuror = procuror.name;
@@ -22,6 +37,7 @@ exports.getDateDosare = async (req, res, next) => {
           id: itemData.id,
           numar_solutii: itemData.numar_solutii,
           nume_solutie: itemData.nume_solutie,
+          nume_pe_scurt_solutie: itemData.nume_pe_scurt_solutie,
           procurorId: itemData.procurorId,
           numeProcuror: numeProcuror,
           an_solutie: itemData.an_solutie,
@@ -58,6 +74,8 @@ exports.addDateDosare = async (req, res, next) => {
     numePeScurtSolutie = "Renuntare"
   }
 
+
+
   let nume_solutie = "";
 
   if(req.body.calea_completa.length >= 255) {
@@ -68,16 +86,31 @@ exports.addDateDosare = async (req, res, next) => {
 
 
   try {
-    const dosar = await DosareSolutionate.create({
+    let dosar;
     
-      an_solutie: req.body.an_solutie,
-      procurorId: req.body.stabilita_id_procuror,
-      numar_solutii: req.body.numar_solutii,
-      nume_solutie: nume_solutie, 
-      nume_pe_scurt_solutie: numePeScurtSolutie
-    });
+    dosar = await DosareSolutionate.findAll({where: {an_solutie: req.body.an_solutie, procurorId: req.body.stabilita_id_procuror, nume_pe_scurt_solutie	: numePeScurtSolutie}})
+   
+
+    if(dosar.length === 0) {
+   
+      dosar = await DosareSolutionate.create({
+      
+        an_solutie: req.body.an_solutie,
+        procurorId: req.body.stabilita_id_procuror,
+        numar_solutii: req.body.numar_solutii,
+        nume_solutie: nume_solutie, 
+        nume_pe_scurt_solutie: numePeScurtSolutie
+      });
+    } else {
+
+      dosar[0].numar_solutii = parseInt(dosar[0].numar_solutii) + parseInt(req.body.numar_solutii);
+      console.log(req.body.numar_solutii, dosar[0].numar_solutii);
+      dosar[0].save();
+    }
 
     const procuror = await User.findByPk(req.body.stabilita_id_procuror);
+
+
 
     if (!procuror) {
       await User.create({
