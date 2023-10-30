@@ -74,7 +74,9 @@ exports.addDateDosare = async (req, res, next) => {
     numePeScurtSolutie = "Renuntare"
   }
 
-
+  if(req.body.calea_completa.includes("Acord de recunoa")) {
+    numePeScurtSolutie = "Acord de recunoastere"
+  }
 
   let nume_solutie = "";
 
