@@ -1,16 +1,14 @@
 const { validationResult } = require("express-validator");
 const Dosar = require("../models/dosar");
 const User = require("../models/user");
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 
 const op = Sequelize.Op;
 
-
-
-exports.getDosareCuAc = async(req, res, next) => {
+exports.getDosareCuAc = async (req, res, next) => {
   let dosare = [];
   let totalItems = 0;
-  let queryObject = { institutia_curenta: {[op.ne]: null}};
+  let queryObject = { institutia_curenta: { [op.ne]: null } };
 
   let procurorId = req.query.procurorId;
   let isAdmin = req.query.isAdmin;
@@ -26,12 +24,12 @@ exports.getDosareCuAc = async(req, res, next) => {
   try {
     dosare = await Dosar.findAll({ where: queryObject });
     totalItems = dosare.length;
-    console.log("ok")
+    console.log("ok");
     let dosareToSend = await Promise.all(
       dosare.map(async (dosar) => {
         const procuror = await User.findByPk(dosar.procurorId);
         let numeProcuror = "null";
-        if(procuror){
+        if (procuror) {
           numeProcuror = procuror.name;
         }
 
@@ -69,12 +67,10 @@ exports.getDosareCuAc = async(req, res, next) => {
     );
 
     res.status(200).json({ dosare: sortedDosare, totalItems: totalItems });
-    
-  }  catch(error) {
+  } catch (error) {
     next(error);
-  } 
-
-}
+  }
+};
 
 exports.getDosare = async (req, res, next) => {
   let dosare = [];
@@ -86,8 +82,7 @@ exports.getDosare = async (req, res, next) => {
   let isAdmin = req.query.isAdmin;
   let este_solutionat = req.query.este_solutionat;
 
-
-  let queryObject = { institutia_curenta: null};
+  let queryObject = { institutia_curenta: null };
 
   if (dosar_name) {
     queryObject.name = dosar_name;
@@ -131,7 +126,7 @@ exports.getDosare = async (req, res, next) => {
       dosare.map(async (dosar) => {
         const procuror = await User.findByPk(dosar.procurorId);
         let numeProcuror = "null";
-        if(procuror){
+        if (procuror) {
           numeProcuror = procuror.name;
         }
         return {
@@ -242,17 +237,21 @@ exports.getDosareByCategory = async (req, res, next) => {
 
 exports.cleanDataBaseCuAc = async (req, res, next) => {
   await Dosar.destroy({
-    where: {institutia_curenta: {[op.ne]: null}}
+    where: { institutia_curenta: { [op.ne]: null } },
   });
 
   res.status(200).json({
     message: "clean dosare ac",
   });
-}
+};
 
 exports.cleanDataBaseDosar = async (req, res, next) => {
   await Dosar.destroy({
-    where: { isControlJudiciar: "0", isSechestru: "0", institutia_curenta: null },
+    where: {
+      isControlJudiciar: "0",
+      isSechestru: "0",
+      institutia_curenta: null,
+    },
   });
 
   res.status(200).json({
@@ -296,6 +295,24 @@ exports.addDosar = async (req, res, next) => {
 
     if (req.body.data_inceperii) {
       data = req.body.data_inceperii;
+      dataArray = req.body.data_inceperii.split(" ")[0].split("/");
+
+      if (dataArray[0].length === 1) {
+        dataArray[0] = "0" + dataArray[0];
+      }
+
+      if (dataArray[1].length === 1) {
+        dataArray[1] = "0" + dataArray[1];
+      }
+
+      dataNoua =
+        dataArray[2] +
+        "-" +
+        dataArray[0] +
+        "-" +
+        dataArray[1] +
+        "T01:00:00.000Z";
+      data = dataNoua;
     }
 
     if (req.body.data_sesizarii_primei) {
@@ -318,12 +335,55 @@ exports.addDosar = async (req, res, next) => {
     if (req.body.date_undertaking) {
       data = req.body.date_undertaking;
       days_remaining = req.body.days_remaining;
+
+      dataArray = req.body.date_undertaking.split(" ")[0].split("/");
+
+      if (dataArray[0].length === 1) {
+        dataArray[0] = "0" + dataArray[0];
+      }
+
+      if (dataArray[1].length === 1) {
+        dataArray[1] = "0" + dataArray[1];
+      }
+
+      dataNoua =
+        dataArray[2] +
+        "-" +
+        dataArray[0] +
+        "-" +
+        dataArray[1] +
+        "T01:00:00.000Z";
+      data = dataNoua;
+
       numar = req.body.numar;
     }
 
     const type = req.body.type;
 
-    const data_inceperii_la_procuror = req.body.data_inceperii_la_procuror;
+    let data_inceperii_la_procuror;
+
+    if (req.body.data_inceperii_la_procuror) {
+      data_inceperii_la_procuror = req.body.data_inceperii_la_procuror;
+      dataArray = req.body.data_inceperii_la_procuror.split(" ")[0].split("/");
+
+      if (dataArray[0].length === 1) {
+        dataArray[0] = "0" + dataArray[0];
+      }
+
+      if (dataArray[1].length === 1) {
+        dataArray[1] = "0" + dataArray[1];
+      }
+
+      dataNoua =
+        dataArray[2] +
+        "-" +
+        dataArray[0] +
+        "-" +
+        dataArray[1] +
+        "T01:00:00.000Z";
+      data_inceperii_la_procuror = dataNoua;
+    }
+
     const data_sechestru = req.body.data_sechestru;
     const data_arest = req.body.data_arest;
     const data_cj = req.body.data_cj;
@@ -332,12 +392,11 @@ exports.addDosar = async (req, res, next) => {
     let tip_solutie_propusa = req.body.tip_solutie_propusa;
 
     const data_primei_sesizari = req.body.data_sesizarii_primei || null;
-    
-    
-    const prima_institutie_sesizata = req.body.prima_institutie_sesizata || null;
+
+    const prima_institutie_sesizata =
+      req.body.prima_institutie_sesizata || null;
 
     console.log(prima_institutie_sesizata);
-
 
     let institutia_curenta = req.body.institutia_curenta || null;
 
@@ -362,7 +421,29 @@ exports.addDosar = async (req, res, next) => {
       isSechestru = true;
     }
 
+    let data_expirarii_mandat = req.body.data_expirarii_mandat;
+
     if (req.body.data_expirarii_mandat) {
+      data = req.body.data_expirarii_mandat;
+      dataArray = req.body.data_expirarii_mandat.split(" ")[0].split("/");
+
+      if (dataArray[0].length === 1) {
+        dataArray[0] = "0" + dataArray[0];
+      }
+
+      if (dataArray[1].length === 1) {
+        dataArray[1] = "0" + dataArray[1];
+      }
+
+      dataNoua =
+        dataArray[2] +
+        "-" +
+        dataArray[0] +
+        "-" +
+        dataArray[1] +
+        "T01:00:00.000Z";
+      data = dataNoua;
+
       isArest = true;
     }
 
@@ -378,22 +459,37 @@ exports.addDosar = async (req, res, next) => {
       isInterceptari = true;
     }
 
-    if (!req.body.data_expirarii_mandat) {
-      const data1 = data.split(" ")[0];
-      const day = data1.split(".")[0];
-      const month = data1.split(".")[1];
-      const year = data1.split(".")[2];
+    // if (!req.body.data_expirarii_mandat) {
+    //   const data1 = data.split(" ")[0];
+    //   const day = data1.split(".")[0];
+    //   const month = data1.split(".")[1];
+    //   const year = data1.split(".")[2];
 
-      data = data1;
-    }
+    //   data = data1;
+    // }
 
     if (req.body.data_expirarii_mandat) {
-      const data1 = data.split(" ")[0];
-      const day = data1.split(".")[0];
-      const month = data1.split(".")[1];
-      const year = data1.split(".")[2];
+      data = req.body.data_expirarii_mandat;
+      dataArray = req.body.data_expirarii_mandat.split(" ")[0].split("/");
 
-      data = data1;
+      if (dataArray[0].length === 1) {
+        dataArray[0] = "0" + dataArray[0];
+      }
+
+      if (dataArray[1].length === 1) {
+        dataArray[1] = "0" + dataArray[1];
+      }
+
+      dataNoua =
+        dataArray[2] +
+        "-" +
+        dataArray[0] +
+        "-" +
+        dataArray[1] +
+        "T22:00:00.000Z";
+      data_expirarii_mandat = dataNoua;
+
+      data = data_expirarii_mandat;
     }
 
     if (req.body.data_sesizarii_primei) {
@@ -405,9 +501,9 @@ exports.addDosar = async (req, res, next) => {
       data = data1;
     }
 
-    console.log(data);
+    //console.log(data);
 
-    console.log("daysREmaining  ", days_remaining);
+    //console.log("daysREmaining  ", days_remaining);
 
     /// 2023-08-01 corect
     /// 01.09.2022
