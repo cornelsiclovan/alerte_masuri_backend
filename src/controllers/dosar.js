@@ -293,9 +293,21 @@ exports.addDosar = async (req, res, next) => {
     let data;
     let days_remaining = null;
 
+    let tip_data_cu_punct = false;
+
     if (req.body.data_inceperii) {
       data = req.body.data_inceperii;
-      dataArray = req.body.data_inceperii.split(" ")[0].split("/");
+
+      dataArray = [];
+
+      if (req.body.data_inceperii.split(" ")[0].includes("/")) {
+        dataArray = req.body.data_inceperii.split(" ")[0].split("/");
+      }
+
+      if (req.body.data_inceperii.split(" ")[0].includes(".")) {
+        tip_data_cu_punct = true;
+        dataArray = req.body.data_inceperii.split(" ")[0].split(".");
+      }
 
       if (dataArray[0].length === 1) {
         dataArray[0] = "0" + dataArray[0];
@@ -305,13 +317,24 @@ exports.addDosar = async (req, res, next) => {
         dataArray[1] = "0" + dataArray[1];
       }
 
-      dataNoua =
-        dataArray[2] +
-        "-" +
-        dataArray[0] +
-        "-" +
-        dataArray[1] +
-        "T01:00:00.000Z";
+      if (tip_data_cu_punct) {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[1] +
+          "-" +
+          dataArray[0] +
+          "T01:00:00.000Z";
+      } else {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[0] +
+          "-" +
+          dataArray[1] +
+          "T01:00:00.000Z";
+      }
+
       data = dataNoua;
     }
 
@@ -336,7 +359,17 @@ exports.addDosar = async (req, res, next) => {
       data = req.body.date_undertaking;
       days_remaining = req.body.days_remaining;
 
-      dataArray = req.body.date_undertaking.split(" ")[0].split("/");
+      let tip_data_cu_punct = false;
+
+      if (req.body.date_undertaking.split(" ")[0].includes("/")) {
+        dataArray = req.body.date_undertaking.split(" ")[0].split("/");
+      }
+
+      if (req.body.date_undertaking.split(" ")[0].includes(".")) {
+        dataArray = req.body.date_undertaking.split(" ")[0].split(".");
+
+        tip_data_cu_punct = true;
+      }
 
       if (dataArray[0].length === 1) {
         dataArray[0] = "0" + dataArray[0];
@@ -346,13 +379,24 @@ exports.addDosar = async (req, res, next) => {
         dataArray[1] = "0" + dataArray[1];
       }
 
-      dataNoua =
-        dataArray[2] +
-        "-" +
-        dataArray[0] +
-        "-" +
-        dataArray[1] +
-        "T01:00:00.000Z";
+      if (tip_data_cu_punct) {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[1] +
+          "-" +
+          dataArray[0] +
+          "T01:00:00.000Z";
+      } else {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[0] +
+          "-" +
+          dataArray[1] +
+          "T01:00:00.000Z";
+      }
+
       data = dataNoua;
 
       numar = req.body.numar;
@@ -364,7 +408,23 @@ exports.addDosar = async (req, res, next) => {
 
     if (req.body.data_inceperii_la_procuror) {
       data_inceperii_la_procuror = req.body.data_inceperii_la_procuror;
-      dataArray = req.body.data_inceperii_la_procuror.split(" ")[0].split("/");
+
+      dataArray = [];
+
+      let tip_data_cu_punct = false;
+
+      if (req.body.data_inceperii_la_procuror.split(" ")[0].includes("/")) {
+        dataArray = req.body.data_inceperii_la_procuror
+          .split(" ")[0]
+          .split("/");
+      }
+
+      if (req.body.data_inceperii_la_procuror.split(" ")[0].includes(".")) {
+        dataArray = req.body.data_inceperii_la_procuror
+          .split(" ")[0]
+          .split(".");
+        tip_data_cu_punct = true;
+      }
 
       if (dataArray[0].length === 1) {
         dataArray[0] = "0" + dataArray[0];
@@ -374,13 +434,24 @@ exports.addDosar = async (req, res, next) => {
         dataArray[1] = "0" + dataArray[1];
       }
 
-      dataNoua =
-        dataArray[2] +
-        "-" +
-        dataArray[0] +
-        "-" +
-        dataArray[1] +
-        "T01:00:00.000Z";
+      if (tip_data_cu_punct) {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[1] +
+          "-" +
+          dataArray[0] +
+          "T01:00:00.000Z";
+      } else {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[0] +
+          "-" +
+          dataArray[1] +
+          "T01:00:00.000Z";
+      }
+
       data_inceperii_la_procuror = dataNoua;
     }
 
@@ -425,7 +496,17 @@ exports.addDosar = async (req, res, next) => {
 
     if (req.body.data_expirarii_mandat) {
       data = req.body.data_expirarii_mandat;
-      dataArray = req.body.data_expirarii_mandat.split(" ")[0].split("/");
+
+      let tip_data_cu_punct = false;
+
+      if (req.body.data_expirarii_mandat.split(" ")[0].includes("/")) {
+        dataArray = req.body.data_expirarii_mandat.split(" ")[0].split("/");
+      }
+
+      if (req.body.data_expirarii_mandat.split(" ")[0].includes(".")) {
+        dataArray = req.body.data_expirarii_mandat.split(" ")[0].split(".");
+        tip_data_cu_punct = true;
+      }
 
       if (dataArray[0].length === 1) {
         dataArray[0] = "0" + dataArray[0];
@@ -435,15 +516,25 @@ exports.addDosar = async (req, res, next) => {
         dataArray[1] = "0" + dataArray[1];
       }
 
-      dataNoua =
-        dataArray[2] +
-        "-" +
-        dataArray[0] +
-        "-" +
-        dataArray[1] +
-        "T01:00:00.000Z";
-      data = dataNoua;
+      if (tip_data_cu_punct) {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[1] +
+          "-" +
+          dataArray[0] +
+          "T01:00:00.000Z";
+      } else {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[0] +
+          "-" +
+          dataArray[1] +
+          "T01:00:00.000Z";
+      }
 
+      data = dataNoua;
       isArest = true;
     }
 
@@ -470,7 +561,17 @@ exports.addDosar = async (req, res, next) => {
 
     if (req.body.data_expirarii_mandat) {
       data = req.body.data_expirarii_mandat;
-      dataArray = req.body.data_expirarii_mandat.split(" ")[0].split("/");
+
+      let tip_data_cu_punct = false;
+
+      if (req.body.data_expirarii_mandat.split(" ")[0].includes("/")) {
+        dataArray = req.body.data_expirarii_mandat.split(" ")[0].split("/");
+      }
+
+      if (req.body.data_expirarii_mandat.split(" ")[0].includes(".")) {
+        dataArray = req.body.data_expirarii_mandat.split(" ")[0].split(".");
+        tip_data_cu_punct = true;
+      }
 
       if (dataArray[0].length === 1) {
         dataArray[0] = "0" + dataArray[0];
@@ -480,25 +581,74 @@ exports.addDosar = async (req, res, next) => {
         dataArray[1] = "0" + dataArray[1];
       }
 
-      dataNoua =
-        dataArray[2] +
-        "-" +
-        dataArray[0] +
-        "-" +
-        dataArray[1] +
-        "T22:00:00.000Z";
+      if (tip_data_cu_punct) {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[1] +
+          "-" +
+          dataArray[0] +
+          "T22:00:00.000Z";
+      } else {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[0] +
+          "-" +
+          dataArray[1] +
+          "T22:00:00.000Z";
+      }
+
       data_expirarii_mandat = dataNoua;
 
       data = data_expirarii_mandat;
     }
 
     if (req.body.data_sesizarii_primei) {
-      const data1 = data.split(" ")[0];
-      const month = data1.split("/")[0];
-      const day = data1.split(".")[1];
-      const year = data1.split(".")[2];
+      console.log("--------------------");
+      console.log(data);
+      console.log("----------------------");
 
-      data = data1;
+      let tip_data_cu_punct = false;
+
+      if (data.split(" ")[0].includes("/")) {
+        dataArray = data.split(" ")[0].split("/");
+      }
+
+      if (data.split(" ")[0].includes(".")) {
+        dataArray = data.split(" ")[0].split(".");
+        tip_data_cu_punct = true;
+      }
+
+      if (dataArray[0].length === 1) {
+        dataArray[0] = "0" + dataArray[0];
+      }
+
+      if (dataArray[1].length === 1) {
+        dataArray[1] = "0" + dataArray[1];
+      }
+
+      let dataNoua;
+
+      if (tip_data_cu_punct) {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[1] +
+          "-" +
+          dataArray[0] +
+          "T22:00:00.000Z";
+      } else {
+        dataNoua =
+          dataArray[2] +
+          "-" +
+          dataArray[0] +
+          "-" +
+          dataArray[1] +
+          "T22:00:00.000Z";
+      }
+
+      data = dataNoua;
     }
 
     //console.log(data);

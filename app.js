@@ -12,6 +12,7 @@ const dosRoutes = require("./src/routes/dosare");
 const userRoutes = require("./src/routes/user");
 const infractiuniRoutes = require("./src/routes/infractiuni");
 const dateDosareSolutionateRoutes = require("./src/routes/dosare_solutionate");
+const genereazaDocumenteRoutes = require("./src/routes/genereaza_documente");
 
 dotenv.config();
 const app = express();
@@ -37,6 +38,9 @@ app.use("/dosar", dosRoutes);
 app.use("/user", userRoutes);
 app.use("/infractiuni", infractiuniRoutes);
 app.use("/dateDosareSolutionate", dateDosareSolutionateRoutes);
+
+app.use("/genereaza-documente", genereazaDocumenteRoutes);
+
 app.use(authRoutes);
 
 //End Routing
