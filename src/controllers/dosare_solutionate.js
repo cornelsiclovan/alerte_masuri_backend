@@ -56,7 +56,7 @@ exports.getDateDosare = async (req, res, next) => {
 };
 
 exports.addDateDosare = async (req, res, next) => {
-  let numePeScurtSolutie;
+  let numePeScurtSolutie = "nedefinit";
 
   if (req.body.calea_completa.includes("Clasare")) {
     numePeScurtSolutie = "Clasare";

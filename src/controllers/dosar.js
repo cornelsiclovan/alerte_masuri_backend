@@ -2,6 +2,11 @@ const { validationResult } = require("express-validator");
 const Dosar = require("../models/dosar");
 const User = require("../models/user");
 const Sequelize = require("sequelize");
+const { formatDate } = require("../util/format-date");
+const Part = require("../models/part");
+const Doing = require("../models/fapte");
+const Pedepse = require("../models/pedepse");
+const Infractiuni = require("../models/infractiuni");
 
 const op = Sequelize.Op;
 
@@ -153,6 +158,7 @@ exports.getDosare = async (req, res, next) => {
           data_primei_sesizari: dosar.data_primei_sesizari,
           prima_institutie_sesizata: dosar.prima_institutie_sesizata,
           institutia_curenta: dosar.institutia_curenta,
+          data_solutie_reala: dosar.data_solutie_reala,
         };
       })
     );
@@ -170,15 +176,54 @@ exports.getDosare = async (req, res, next) => {
 
 exports.getDosarById = async (req, res, next) => {
   let dosar;
+  let parte;
+  let fapta;
+  let pedeapsa;
+
   const dosarId = req.params.dosarId;
 
   try {
     dosar = await Dosar.findAll({ where: { id: dosarId } });
+    if (dosar) {
+      parte = await Part.findAll({ where: { numar_dosar: dosar[0].numar } });
+      fapta = await Doing.findAll({
+        where: { numar_dosar: dosar[0].numar },
+      });
+    }
+
     if (!dosar) {
       const error = new Error("Acest dosar nu exista.");
       error.statusCode = 404;
       throw error;
     }
+    
+  
+    if(fapta[0]){
+
+
+      const articol = fapta[0].nume_temei.split(" ")[0].split(".")[1];
+      let alineat = 1;
+      if(fapta[0].nume_temei.includes("alin.")) {
+         alineat = fapta[0].nume_temei.split(" ")[1].split(".")[1];
+      }
+      
+      const infractiune = await Infractiuni.findAll({where: {articol: articol}});
+
+      
+
+      const pedeapsa = await Pedepse.findAll({where: {id_infractiune: infractiune[0].id, alineat: alineat}})
+      dosar[0].dataValues.pedeapsa = pedeapsa[0].nume_pe_scurt;
+    }
+  
+
+ 
+
+    
+
+
+    dosar[0].dataValues.parte = parte;
+    dosar[0].dataValues.fapta = fapta;
+  
 
     res.status(200).json({ dosar: dosar[0] });
   } catch (err) {
@@ -535,11 +580,14 @@ exports.addDosar = async (req, res, next) => {
       }
 
       data = dataNoua;
-      isArest = true;
     }
 
-    if (req.body.data_expirarii_mandat) {
+    if (req.body.data_expirarii_mandat && req.body.nume_masura_preventiva.includes("control") || req.body.nume_masura_preventiva.includes("Control")) {
       isControlJudiciar = true;
+    }
+
+    if (req.body.data_expirarii_mandat && req.body.nume_masura_preventiva.includes("arest") || req.body.nume_masura_preventiva.includes("Arest")) {
+      isArest = true;
     }
 
     if (req.body.date_undertaking) {
@@ -558,6 +606,12 @@ exports.addDosar = async (req, res, next) => {
 
     //   data = data1;
     // }
+
+    let data_solutie_reala = null;
+
+    if (req.body.data_solutie_reala) {
+      data_solutie_reala = formatDate(req.body.data_solutie_reala);
+    }
 
     if (req.body.data_expirarii_mandat) {
       data = req.body.data_expirarii_mandat;
@@ -681,6 +735,9 @@ exports.addDosar = async (req, res, next) => {
       data_primei_sesizari: data,
       prima_institutie_sesizata: prima_institutie_sesizata,
       institutia_curenta: institutia_curenta,
+      data_solutie_reala: data_solutie_reala || null,
+      parte: req.body.nume_parte || null,
+      trimis_masura_la_instanta: req.body.trimis_masura_la_instanta || null
     });
 
     const procuror = await User.findByPk(procurorId);

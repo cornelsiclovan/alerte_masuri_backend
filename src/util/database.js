@@ -8,11 +8,12 @@ const sequelize = new Sequelize(
     dialect: "mysql",
     host: "localhost",
     timezone: "+00:00",
+    logging: false
   },
   {
     charset: "utf8",
     collate: "utf8_unicode_ci",
-  }
+  },
 );
 
 module.exports = sequelize;

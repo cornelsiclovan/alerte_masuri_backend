@@ -12,6 +12,13 @@ const Infractiuni = sequelize.define("infractiuni", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  
+},{
+  timestamps: false
+},   {
+  charset: "utf8",
+  collate: "utf8_unicode_ci",
 });
 
 module.exports = Infractiuni;
+  
