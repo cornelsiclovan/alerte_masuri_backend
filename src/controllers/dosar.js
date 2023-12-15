@@ -159,6 +159,7 @@ exports.getDosare = async (req, res, next) => {
           prima_institutie_sesizata: dosar.prima_institutie_sesizata,
           institutia_curenta: dosar.institutia_curenta,
           data_solutie_reala: dosar.data_solutie_reala,
+          trimis_masura_la_instanta: dosar.trimis_masura_la_instanta || '0'
         };
       })
     );
@@ -196,34 +197,26 @@ exports.getDosarById = async (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
-    
-  
-    if(fapta[0]){
 
-
+    if (fapta[0]) {
       const articol = fapta[0].nume_temei.split(" ")[0].split(".")[1];
       let alineat = 1;
-      if(fapta[0].nume_temei.includes("alin.")) {
-         alineat = fapta[0].nume_temei.split(" ")[1].split(".")[1];
+      if (fapta[0].nume_temei.includes("alin.")) {
+        alineat = fapta[0].nume_temei.split(" ")[1].split(".")[1];
       }
-      
-      const infractiune = await Infractiuni.findAll({where: {articol: articol}});
 
-      
+      const infractiune = await Infractiuni.findAll({
+        where: { articol: articol },
+      });
 
-      const pedeapsa = await Pedepse.findAll({where: {id_infractiune: infractiune[0].id, alineat: alineat}})
+      const pedeapsa = await Pedepse.findAll({
+        where: { id_infractiune: infractiune[0].id, alineat: alineat },
+      });
       dosar[0].dataValues.pedeapsa = pedeapsa[0].nume_pe_scurt;
     }
-  
-
- 
-
-    
-
 
     dosar[0].dataValues.parte = parte;
     dosar[0].dataValues.fapta = fapta;
-  
 
     res.status(200).json({ dosar: dosar[0] });
   } catch (err) {
@@ -317,6 +310,10 @@ exports.cleanDataBaseSechestru = async (req, res, next) => {
 exports.cleanDataBaseMasuri = async (req, res, next) => {
   await Dosar.destroy({
     where: { isControlJudiciar: "1" },
+  });
+
+  await Dosar.destroy({
+    where: { isArest: "1" },
   });
 
   res.status(200).json({
@@ -582,11 +579,19 @@ exports.addDosar = async (req, res, next) => {
       data = dataNoua;
     }
 
-    if (req.body.data_expirarii_mandat && req.body.nume_masura_preventiva.includes("control") || req.body.nume_masura_preventiva.includes("Control")) {
+    if (
+      (req.body.data_expirarii_mandat &&
+        req.body.nume_masura_preventiva.includes("control")) ||
+      req.body.nume_masura_preventiva.includes("Control")
+    ) {
       isControlJudiciar = true;
     }
 
-    if (req.body.data_expirarii_mandat && req.body.nume_masura_preventiva.includes("arest") || req.body.nume_masura_preventiva.includes("Arest")) {
+    if (
+      (req.body.data_expirarii_mandat &&
+        req.body.nume_masura_preventiva.includes("arest")) ||
+      req.body.nume_masura_preventiva.includes("Arest")
+    ) {
       isArest = true;
     }
 
@@ -737,7 +742,7 @@ exports.addDosar = async (req, res, next) => {
       institutia_curenta: institutia_curenta,
       data_solutie_reala: data_solutie_reala || null,
       parte: req.body.nume_parte || null,
-      trimis_masura_la_instanta: req.body.trimis_masura_la_instanta || null
+      trimis_masura_la_instanta: req.body.trimis_masura_la_instanta || null,
     });
 
     const procuror = await User.findByPk(procurorId);
@@ -771,19 +776,17 @@ exports.addDosar = async (req, res, next) => {
 exports.editDosar = async (req, res, next) => {
   const errors = validationResult(req);
   const dosarId = req.params.dosarId;
-  const userId = req.userId;
+  let dosarNumar = dosarId.split("separator")[0];
+  const parte = dosarId.split("separator")[1];
+  let dosIntermediar = []
 
-  const numar = req.body.numar;
-  const type = req.body.type;
-  const data = req.body.data;
-  const data_sechestru = req.body.data_sechestru;
-  const data_arest = req.body.data_arest;
-  const data_cj = req.body.data_cj;
-  const procurorId = req.body.procurorId;
-  const este_solutionat = req.body.este_solutionat === "true" ? 1 : 0;
-  const data_interceptari = req.body.data_interceptari;
-  const tip_solutie = req.body.tip_solutie;
-  const tip_solutie_propusa = req.body.tip_solutie_propusa;
+  
+
+  dosarNumar = dosarNumar.split("-")[0]+ "/" + dosarNumar.split("-")[1]+"/" + dosarNumar.split("-")[2]
+
+ 
+
+
 
   try {
     if (!errors.isEmpty) {
@@ -792,13 +795,23 @@ exports.editDosar = async (req, res, next) => {
       throw error;
     }
 
-    const dosar = await Dosar.findByPk(dosarId);
+    //const dosar = await Dosar.findByPk(dosarId);
+
+    const dosare = await Dosar.findAll({ where: { numar: dosarNumar, parte: parte}});
+
+    dosare.map(dos => {if(dos.isArest || dos.isControlJudiciar) dosIntermediar.push(dos)})
+
+
+    let dosar = await Dosar.findByPk(dosIntermediar[0].id);
+
+
 
     const user = await User.findByPk(req.userId);
 
     const isProcuror = user.isProcuror;
 
     if (dosar.userId !== req.userId && !isProcuror) {
+      console.log("test");
       const error = new Error(
         "Nu sunteti autorizat. Dosarul nu este introdus de dvs!"
       );
@@ -806,45 +819,7 @@ exports.editDosar = async (req, res, next) => {
       throw error;
     }
 
-    dosar.numar = numar || dosar.numar;
-    dosar.data = data;
-    dosar.data_sechestru = data_sechestru || null;
-    dosar.data_arest = data_arest || null;
-    dosar.data_cj = data_cj || null;
-    dosar.procurorId = procurorId;
-    const type = req.body.type;
-    dosar.este_solutionat = este_solutionat || 0;
-    dosar.data_interceptari = data_interceptari || null;
-    dosar.tip_solutie = tip_solutie;
-    dosar.tip_solutie_propusa = tip_solutie_propusa;
-
-    if (este_solutionat === 0) {
-      dosar.tip_solutie = null;
-    }
-
-    if (data_sechestru) {
-      dosar.isSechestru = true;
-    } else {
-      dosar.isSechestru = false;
-    }
-
-    if (data_arest) {
-      dosar.isArest = true;
-    } else {
-      dosar.isArest = false;
-    }
-
-    if (data_cj) {
-      dosar.isControlJudiciar = true;
-    } else {
-      dosar.isControlJudiciar = false;
-    }
-
-    if (data_interceptari) {
-      dosar.isInterceptari = true;
-    } else {
-      dosar.isInterceptari = false;
-    }
+    dosar.trimis_masura_la_instanta = 1;
 
     await dosar.save();
 

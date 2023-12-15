@@ -99,7 +99,12 @@ const Dosar = sequelize.define(
     },
     parte: {
       type: Sequelize.STRING,
-      allowNull: true
+      allowNull: true,
+    },
+    trimis_masura_la_instanta: 
+    { 
+      type: Sequelize.INTEGER, 
+      allowNull: true 
     },
   },
   {
