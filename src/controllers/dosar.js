@@ -159,7 +159,9 @@ exports.getDosare = async (req, res, next) => {
           prima_institutie_sesizata: dosar.prima_institutie_sesizata,
           institutia_curenta: dosar.institutia_curenta,
           data_solutie_reala: dosar.data_solutie_reala,
-          trimis_masura_la_instanta: dosar.trimis_masura_la_instanta || '0'
+          trimis_masura_la_instanta: dosar.trimis_masura_la_instanta || "0",
+          admitere_contestatie: dosar.admitere_contestatie || null,
+          termen_contestatie: dosar.termen_contestatie
         };
       })
     );
@@ -321,8 +323,24 @@ exports.cleanDataBaseMasuri = async (req, res, next) => {
   });
 };
 
+exports.cleanDataBaseContestatii = async (req, res, next) => {
+  await Dosar.destroy({
+    where: { admitere_contestatie: "1" },
+  });
+
+  res.status(200).json({
+    message: "clean contestatii",
+  });
+};
+
 exports.addDosar = async (req, res, next) => {
   const errors = validationResult(req);
+  let isContestatie = false;
+
+  if (req.body.calea_completa && req.body.calea_completa.includes("Soluţionare-Admitere contestaţie")) {
+    isContestatie = true;
+  }
+
 
   try {
     if (!errors.isEmpty) {
@@ -580,9 +598,9 @@ exports.addDosar = async (req, res, next) => {
     }
 
     if (
-      (req.body.data_expirarii_mandat &&
+      (req.body.data_expirarii_mandat && 
         req.body.nume_masura_preventiva.includes("control")) ||
-      req.body.nume_masura_preventiva.includes("Control")
+      req.body.nume_masura_preventiva && req.body.nume_masura_preventiva.includes("Control")
     ) {
       isControlJudiciar = true;
     }
@@ -590,7 +608,7 @@ exports.addDosar = async (req, res, next) => {
     if (
       (req.body.data_expirarii_mandat &&
         req.body.nume_masura_preventiva.includes("arest")) ||
-      req.body.nume_masura_preventiva.includes("Arest")
+        req.body.nume_masura_preventiva && req.body.nume_masura_preventiva.includes("Arest")
     ) {
       isArest = true;
     }
@@ -721,6 +739,16 @@ exports.addDosar = async (req, res, next) => {
       tip_solutie_propusa = "UPP";
     }
 
+    let admitere_contestatie = 0;
+    let termen_contestatie = null;
+
+    if (req.body.calea_completa && req.body.calea_completa.includes("Soluţionare-Admitere contestaţie")) {
+      admitere_contestatie = 1;
+      termen_contestatie = formatDate(req.body.data_termen);
+      numar = req.body.numar;
+      data = formatDate(req.body.data_termen);
+    }
+
     const dosar = await Dosar.create({
       numar: numar,
       data: data,
@@ -743,6 +771,8 @@ exports.addDosar = async (req, res, next) => {
       data_solutie_reala: data_solutie_reala || null,
       parte: req.body.nume_parte || null,
       trimis_masura_la_instanta: req.body.trimis_masura_la_instanta || null,
+      admitere_contestatie: admitere_contestatie,
+      termen_contestatie: termen_contestatie,
     });
 
     const procuror = await User.findByPk(procurorId);
@@ -778,15 +808,14 @@ exports.editDosar = async (req, res, next) => {
   const dosarId = req.params.dosarId;
   let dosarNumar = dosarId.split("separator")[0];
   const parte = dosarId.split("separator")[1];
-  let dosIntermediar = []
+  let dosIntermediar = [];
 
-  
-
-  dosarNumar = dosarNumar.split("-")[0]+ "/" + dosarNumar.split("-")[1]+"/" + dosarNumar.split("-")[2]
-
- 
-
-
+  dosarNumar =
+    dosarNumar.split("-")[0] +
+    "/" +
+    dosarNumar.split("-")[1] +
+    "/" +
+    dosarNumar.split("-")[2];
 
   try {
     if (!errors.isEmpty) {
@@ -797,14 +826,15 @@ exports.editDosar = async (req, res, next) => {
 
     //const dosar = await Dosar.findByPk(dosarId);
 
-    const dosare = await Dosar.findAll({ where: { numar: dosarNumar, parte: parte}});
+    const dosare = await Dosar.findAll({
+      where: { numar: dosarNumar, parte: parte },
+    });
 
-    dosare.map(dos => {if(dos.isArest || dos.isControlJudiciar) dosIntermediar.push(dos)})
-
+    dosare.map((dos) => {
+      if (dos.isArest || dos.isControlJudiciar) dosIntermediar.push(dos);
+    });
 
     let dosar = await Dosar.findByPk(dosIntermediar[0].id);
-
-
 
     const user = await User.findByPk(req.userId);
 

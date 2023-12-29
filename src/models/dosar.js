@@ -106,6 +106,15 @@ const Dosar = sequelize.define(
       type: Sequelize.INTEGER, 
       allowNull: true 
     },
+    admitere_contestatie: 
+    {
+      type: Sequelize.INTEGER,
+      allowNull: true
+    },
+    termen_contestatie: {
+      type: Sequelize.DATE,
+      allowNull: true
+    }
   },
   {
     charset: "utf8",

@@ -22,6 +22,7 @@ router.post("/cleanMasuri", isAuth, dosarController.cleanDataBaseMasuri);
 router.post("/cleanDosare", isAuth, dosarController.cleanDataBaseDosar);
 router.post("/cleanSechestru", isAuth, dosarController.cleanDataBaseSechestru);
 router.post("/cleanDosareCuAc", isAuth, dosarController.cleanDataBaseCuAc);
+router.post("/cleanContestatii", isAuth, dosarController.cleanDataBaseContestatii);
 
 router.patch("/:dosarId", isAuth, dosarController.editDosar);
 
