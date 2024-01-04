@@ -25,6 +25,9 @@ exports.getFileByDosarName = async (req, res, next) => {
       directorsolutie = "/rup/"
     }
 
+    if(tip_solutie.includes("RECH")) {
+      directorsolutie = "/rechizitorii/"
+    }
     
     if (!fileNames) {
       const error = new Error("Acest dosar nu are fisiere inregistrate");
