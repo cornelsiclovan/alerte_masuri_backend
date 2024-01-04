@@ -20,6 +20,14 @@ exports.genereaza = async (req, res, next) => {
     let starea_de_fapt_reformulare =
       situatie.charAt(0).toLowerCase() + situatie.slice(1);
 
+    if (
+      starea_de_fapt_reformulare.charAt(
+        starea_de_fapt_reformulare.length - 1
+      ) === "."
+    ) {
+      starea_de_fapt_reformulare = starea_de_fapt_reformulare.slice(0, - 1);
+    }
+
     let starea_de_fapt_reformulare_array = [];
 
     if (situatie.includes("inculpatul")) {
