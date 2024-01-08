@@ -13,7 +13,7 @@ const LITERE_ARTICOL_CU_TEXT_LIBRARY = [
   "lit. c C. proc. pen., întrucât nu există probe că o persoană a săvârșit infracțiunea",
   "lit. d C. proc. pen., întrucât este incidentă o cauză justificativă",
   "lit. d C. proc. pen., întrucât este incidentă o cauză de neimputabilitate",
-  "lit. e C. proc. pen., întrucât lipsește plângerea prealabilă", 
+  "lit. e C. proc. pen., întrucât lipsește plângerea prealabilă",
   "lit. f C. proc. pen., întrucât a intervenit decesul",
   "lit. f C. proc. pen., întrucât a intervenit prescripția răspunderii penale",
   "lit. g teza I C. proc. pen., întrucât a intervenit retragerea plângerii prealabile",
@@ -25,9 +25,7 @@ const LITERE_ARTICOL_CU_TEXT_LIBRARY = [
 let LITERE_ARTICOL_LIBRARY = [];
 
 LITERE_ARTICOL_CU_TEXT_LIBRARY.forEach((litera_articol) => {
-  LITERE_ARTICOL_LIBRARY.push(
-    litera_articol.split(",")[0] .slice(0, -1)
-  );
+  LITERE_ARTICOL_LIBRARY.push(litera_articol.split(",")[0].slice(0, -1));
 });
 
 exports.genereaza = async (req, res, next) => {
@@ -42,6 +40,17 @@ exports.genereaza = async (req, res, next) => {
       (nowDate.getMonth() + 1) +
       "." +
       nowDate.getFullYear();
+
+    let dateArray = dateOnly.split(".");
+    if (dateArray[0].length === 1) {
+      dateArray[0] = "0" + dateArray[0];
+    }
+
+    if (dateArray[1].length === 1) {
+      dateArray[1] = "0" + dateArray[1];
+    }
+
+    dateOnly = dateArray[0] + "." + dateArray[1] + "." + dateArray[2];
 
     const data_clasare = dateOnly; // FORM
 
@@ -182,20 +191,26 @@ exports.genereaza = async (req, res, next) => {
         " " +
         filename;
 
-      const docPath = path.join(__dirname, "..", "..", "documente", "clasari-insusite");
+      const docPath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "documente",
+        "clasari-insusite"
+      );
 
       fs.writeFileSync("documente/clasari-insusite/" + filename + ".docx", doc);
 
       await File.create({
-          numar_dosar: req.body.numar_dosar,
-          nume: filename,
-          tip_document: "CLASARE INSUSITA"
-      })
+        numar_dosar: req.body.numar_dosar,
+        nume: filename,
+        tip_document: "CLASARE INSUSITA",
+      });
 
       // const myDocName = docPath + "/" + filename + ".docx";
 
-      res.status(200).json({message: "success"});
-    
+      res.status(200).json({ message: "success" });
+
       // res.status(200).json({
       //   message: "dosarul a fost solutionat",
       // });

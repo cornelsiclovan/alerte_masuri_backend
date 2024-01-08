@@ -181,7 +181,11 @@ exports.getDosarById = async (req, res, next) => {
   let dosar;
   let parte;
   let fapta;
+  
+  
+
   let pedeapsa;
+
 
   const dosarId = req.params.dosarId;
 
@@ -200,14 +204,16 @@ exports.getDosarById = async (req, res, next) => {
       throw error;
     }
 
-    if (fapta[0]) {
-      const articol = fapta[0].nume_temei.split(" ")[0].split(".")[1];
+    let infractiune;
+   
+    if (fapta[fapta.length-1]) {
+      const articol = fapta[fapta.length-1].nume_temei.split(" ")[0].split(".")[1];
       let alineat = 1;
-      if (fapta[0].nume_temei.includes("alin.")) {
-        alineat = fapta[0].nume_temei.split(" ")[1].split(".")[1];
+      if (fapta[fapta.length-1].nume_temei.includes("alin.")) {
+        alineat = fapta[fapta.length-1].nume_temei.split(" ")[1].split(".")[1];
       }
 
-      const infractiune = await Infractiuni.findAll({
+      infractiune = await Infractiuni.findAll({
         where: { articol: articol },
       });
 
@@ -217,8 +223,18 @@ exports.getDosarById = async (req, res, next) => {
       dosar[0].dataValues.pedeapsa = pedeapsa[0].nume_pe_scurt;
     }
 
+    if(infractiune[0].copil) {
+      let parinte_infractiune = await Infractiuni.findAll({
+        where: {id: infractiune[0].copil}
+      })
+      dosar[0].dataValues.infractiuneParinte = parinte_infractiune[0]
+    }
+    
+
     dosar[0].dataValues.parte = parte;
     dosar[0].dataValues.fapta = fapta;
+    dosar[0].dataValues.infractiune = infractiune
+    
 
     res.status(200).json({ dosar: dosar[0] });
   } catch (err) {

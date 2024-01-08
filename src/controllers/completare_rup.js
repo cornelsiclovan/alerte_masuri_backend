@@ -22,6 +22,17 @@ exports.genereaza = async (req, res, next) => {
       "." +
       nowDate.getFullYear();
 
+    let dateArray = dateOnly.split(".");
+    if (dateArray[0].length === 1) {
+      dateArray[0] = "0" + dateArray[0];
+    }
+
+    if (dateArray[1].length === 1) {
+      dateArray[1] = "0" + dateArray[1];
+    }
+
+    dateOnly = dateArray[0] + "." + dateArray[1] + "." + dateArray[2];
+
     const data_rup = dateOnly; // FORM
 
     let infractiune = req.body.fapta; // DIN ECRIS
@@ -29,8 +40,7 @@ exports.genereaza = async (req, res, next) => {
 
     let comunicare_parti = "";
 
-
-    if(parte_vatamata) {
+    if (parte_vatamata) {
       comunicare_parti = "persoanei vătămate " + parte_vatamata;
     }
 
@@ -45,46 +55,51 @@ exports.genereaza = async (req, res, next) => {
     let templateName = "template/rup/template.docx";
 
     if (
-
-      autorul_faptei === "AUTOR NECUNOSCUT" ||
-      autorul_faptei === "AN" ||
-      autorul_faptei === "A.N."
+      (autorul_faptei === "AUTOR NECUNOSCUT" ||
+        autorul_faptei === "AN" ||
+        autorul_faptei === "A.N.",
+      autorul_faptei === "")
     ) {
       templateName = "template/rup_an/template.docx";
     }
 
     if (
-      parte_vatamata && 
+      parte_vatamata &&
       autorul_faptei !== "AUTOR NECUNOSCUT" &&
       !autorul_faptei.includes(",")
     ) {
       comunicare_parti = comunicare_parti + " și numitului " + autorul_faptei;
     }
 
-    
     if (
-      !parte_vatamata && 
+      !parte_vatamata &&
       autorul_faptei !== "AUTOR NECUNOSCUT" &&
       !autorul_faptei.includes(",")
     ) {
       comunicare_parti = comunicare_parti + "numitului " + autorul_faptei;
     }
 
-    
-
-    if (parte_vatamata && autorul_faptei !== "AUTOR NECUNOSCUT" && autorul_faptei.includes(",")) {
+    if (
+      parte_vatamata &&
+      autorul_faptei !== "AUTOR NECUNOSCUT" &&
+      autorul_faptei.includes(",")
+    ) {
       comunicare_parti = comunicare_parti + " și numiților " + autorul_faptei;
     }
 
-    if (!parte_vatamata && autorul_faptei !== "AUTOR NECUNOSCUT" && autorul_faptei.includes(",")) {
+    if (
+      !parte_vatamata &&
+      autorul_faptei !== "AUTOR NECUNOSCUT" &&
+      autorul_faptei.includes(",")
+    ) {
       comunicare_parti = comunicare_parti + "numiților " + autorul_faptei;
     }
 
     let fisa_cazier = "numitul " + autorul_faptei + " nu are";
     let audiat = "audiat, numitul " + autorul_faptei + " a";
 
-    if(autorul_faptei.includes(",")) {
-      fisa_cazier = "numiții " + autorul_faptei + " nu au"
+    if (autorul_faptei.includes(",")) {
+      fisa_cazier = "numiții " + autorul_faptei + " nu au";
       audiat = "audiați, numiții " + autorul_faptei + " au";
     }
 

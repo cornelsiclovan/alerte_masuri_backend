@@ -12,7 +12,10 @@ const Infractiuni = sequelize.define("infractiuni", {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  
+  copil: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  }
 },{
   timestamps: false
 },   {
