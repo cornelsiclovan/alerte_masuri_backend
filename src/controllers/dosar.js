@@ -204,7 +204,7 @@ exports.getDosarById = async (req, res, next) => {
       throw error;
     }
 
-    let infractiune;
+    let infractiune = [];
    
     if (fapta[fapta.length-1]) {
       const articol = fapta[fapta.length-1].nume_temei.split(" ")[0].split(".")[1];
@@ -219,7 +219,7 @@ exports.getDosarById = async (req, res, next) => {
 
       let pedeapsa;
 
-      if(infractiune) {
+      if(infractiune && infractiune.length > 0) {
       pedeapsa = await Pedepse.findAll({
         where: { id_infractiune: infractiune[0].id, alineat: alineat },
       });
