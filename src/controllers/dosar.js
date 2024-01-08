@@ -217,9 +217,15 @@ exports.getDosarById = async (req, res, next) => {
         where: { articol: articol },
       });
 
-      const pedeapsa = await Pedepse.findAll({
+      let pedeapsa;
+
+      if(infractiune) {
+      pedeapsa = await Pedepse.findAll({
         where: { id_infractiune: infractiune[0].id, alineat: alineat },
       });
+      }
+
+
       dosar[0].dataValues.pedeapsa = pedeapsa[0].nume_pe_scurt;
     }
 
