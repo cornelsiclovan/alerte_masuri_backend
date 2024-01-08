@@ -217,7 +217,7 @@ exports.getDosarById = async (req, res, next) => {
         where: { articol: articol },
       });
 
-      let pedeapsa;
+      let pedeapsa = [];
 
       if(infractiune && infractiune.length > 0) {
       pedeapsa = await Pedepse.findAll({
@@ -225,11 +225,13 @@ exports.getDosarById = async (req, res, next) => {
       });
       }
 
-
-      dosar[0].dataValues.pedeapsa = pedeapsa[0].nume_pe_scurt;
+      if(pedeapsa.length > 0) {
+        dosar[0].dataValues.pedeapsa = pedeapsa[0].nume_pe_scurt;
+      }
     }
 
-    if(infractiune[0].copil) {
+
+    if(infractiune.length > 0 && infractiune[0].copil) {
       let parinte_infractiune = await Infractiuni.findAll({
         where: {id: infractiune[0].copil}
       })
