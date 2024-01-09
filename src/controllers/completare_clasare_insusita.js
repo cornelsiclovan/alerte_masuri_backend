@@ -34,7 +34,7 @@ exports.genereaza = async (req, res, next) => {
     const numar_dosar = req.body.numar_dosar; // DIN ECRIS
 
     const nowDate = new Date();
-    const dateOnly =
+    let dateOnly =
       nowDate.getDate() +
       "." +
       (nowDate.getMonth() + 1) +

@@ -15,7 +15,7 @@ exports.genereaza = async (req, res, next) => {
     let pedeapsa = req.body.pedeapsa || "-----------------";
 
     const nowDate = new Date();
-    const dateOnly =
+    let dateOnly =
       nowDate.getDate() +
       "." +
       (nowDate.getMonth() + 1) +
