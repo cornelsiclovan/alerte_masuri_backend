@@ -55,7 +55,7 @@ exports.genereaza = async (req, res, next) => {
     let templateName = "template/rup/template.docx";
 
     if (
-      (autorul_faptei.includes("NECUNOSCUT") ||
+      (autorul_faptei === "AUTOR NECUNOSCUT" ||
         autorul_faptei === "AN" ||
         autorul_faptei === "A.N.",
       autorul_faptei === "")
