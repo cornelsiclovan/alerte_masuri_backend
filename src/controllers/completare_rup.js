@@ -48,18 +48,15 @@ exports.genereaza = async (req, res, next) => {
       comunicare_parti = "părților vătămate " + parte_vatamata;
     }
 
-    console.log(typeof nume_procuror);
 
     const nume_procuror_all_caps = nume_procuror.toUpperCase(); // DIN ECRIS
 
     let templateName = "template/rup/template.docx";
 
-    if (
-      (autorul_faptei === "AUTOR NECUNOSCUT" ||
-        autorul_faptei === "AN" ||
-        autorul_faptei === "A.N.",
-      autorul_faptei === "")
-    ) {
+    console.log("line 57", autorul_faptei === "AUTOR NECUNOSCUT" || autorul_faptei === "AN" || autorul_faptei === "A.N.", autorul_faptei === "", "a faptei: ", autorul_faptei );
+
+    if ( autorul_faptei === "AUTOR NECUNOSCUT" || autorul_faptei === "AN" || autorul_faptei === "A.N." || autorul_faptei === "") {
+      console.log("here");
       templateName = "template/rup_an/template.docx";
     }
 
