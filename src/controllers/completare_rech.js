@@ -25,7 +25,7 @@ exports.genereaza = async (req, res, next) => {
         starea_de_fapt_reformulare.length - 1
       ) === "."
     ) {
-      starea_de_fapt_reformulare = starea_de_fapt_reformulare.slice(0, - 1);
+      starea_de_fapt_reformulare = starea_de_fapt_reformulare.slice(0, -1);
     }
 
     let starea_de_fapt_reformulare_array = [];
@@ -51,8 +51,12 @@ exports.genereaza = async (req, res, next) => {
 
     // rechizitoriu alcool sau lipsa permis
     if (infractiune.includes("335") || infractiune.includes("336")) {
-      if (situatie.includes("alcoolemie")) {
+      if (situatie.includes("alcool")) {
+        if(situatie.includes("aflându-se"))
         starea_de_fapt_partial = situatie.split("aflându-se")[0];
+        if(situatie.includes("fiind"))
+        starea_de_fapt_partial = situatie.split("fiind")[0];
+      
       }
       console.log("335");
       if (situatie.includes("fără")) {
