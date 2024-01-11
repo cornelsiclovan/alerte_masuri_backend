@@ -5,6 +5,7 @@ const path = require("path");
 const { TextRun, patchDocument, PatchType } = require("docx");
 const { now } = require("mongoose");
 const File = require("../models/file");
+const Part = require("../models/part");
 
 exports.genereaza = async (req, res, next) => {
   try {
@@ -13,6 +14,17 @@ exports.genereaza = async (req, res, next) => {
     const autorul_faptei = req.body.autorul_faptei || "-----------------";
     const situatie = req.body.situatie || "------------------";
     let infractiune = req.body.fapta || "";
+
+    let autor = await Part.findOne({ where: { nume: autorul_faptei, numar_dosar: numar_dosar} });
+
+
+    let autor_minor_major = "major"
+
+    if(autor && autor.minor) {
+      if(autor.minor === '1') {
+        autor_minor_major = "minor"
+      } 
+    }
 
     let starea_de_fapt_data = situatie.split(",")[0].split(" ")[3];
 
@@ -184,6 +196,176 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${autorul_faptei}`,
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        cnp: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.cnp}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        tata: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.tata}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        mama: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.mama}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        data_nastere: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.data_nasterii}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        loc_nastere: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.locul_nasterii}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        judet_nastere: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.judet_nastere}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        localitate: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.localitate}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        judet: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.judet}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        strada: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.strada}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        numar: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.numar}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        bloc: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.bloc}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        scara: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.scara}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        apartament: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.apartament}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        minor_major: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor_minor_major}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        stare_civila: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.stare_civila}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        studii: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.studii}` || "--------",
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        ocupatie: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${autor.ocupatie}` || "--------",
               font: "Palatino Linotype",
               size: 24,
             }),
