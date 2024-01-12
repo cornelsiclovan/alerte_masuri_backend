@@ -73,9 +73,13 @@ exports.genereaza = async (req, res, next) => {
     const infractiune = req.body.fapta; // DIN ECRIS
     const parte_vatamata = req.body.parti_vatamate; // DIN ECRIS
 
-    console.log(typeof nume_procuror);
-
     const nume_procuror_all_caps = nume_procuror.toUpperCase(); // DIN ECRIS
+
+    let textParteVatamata =  "persoanei vătămate " + parte_vatamata;
+
+    if(parte_vatamata.includes(", ")){
+      textParteVatamata = "persoanelor vătămate " + parte_vatamata;
+    }
 
     patchDocument(fs.readFileSync("template/clasare-insusita/template.docx"), {
       patches: {
@@ -164,7 +168,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${parte_vatamata}`,
+              text: `${textParteVatamata}`,
               font: "Palatino Linotype",
               size: 24,
             }),
