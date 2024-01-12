@@ -161,7 +161,7 @@ exports.getDosare = async (req, res, next) => {
           data_solutie_reala: dosar.data_solutie_reala,
           trimis_masura_la_instanta: dosar.trimis_masura_la_instanta || "0",
           admitere_contestatie: dosar.admitere_contestatie || null,
-          termen_contestatie: dosar.termen_contestatie
+          termen_contestatie: dosar.termen_contestatie,
         };
       })
     );
@@ -181,11 +181,8 @@ exports.getDosarById = async (req, res, next) => {
   let dosar;
   let parte;
   let fapta;
-  
-  
 
   let pedeapsa;
-
 
   const dosarId = req.params.dosarId;
 
@@ -205,44 +202,73 @@ exports.getDosarById = async (req, res, next) => {
     }
 
     let infractiune = [];
-   
-    if (fapta[fapta.length-1]) {
-      const articol = fapta[fapta.length-1].nume_temei.split(" ")[0].split(".")[1];
-      let alineat = 1;
-      if (fapta[fapta.length-1].nume_temei.includes("alin.")) {
-        alineat = fapta[fapta.length-1].nume_temei.split(" ")[1].split(".")[1];
-      }
 
-      infractiune = await Infractiuni.findAll({
-        where: { articol: articol },
-      });
+    if (fapta[fapta.length - 1]) {
+      if (fapta[fapta.length - 1].nume_temei.includes("199")) {
+        const articol = fapta[0].nume_temei
+          .split(" ")[0]
+          .split(".")[1];
+        let alineat = 1;
+        if (fapta[0].nume_temei.includes("alin.")) {
+          alineat = fapta[0].nume_temei
+            .split(" ")[1]
+            .split(".")[1];
+        }
 
-      let pedeapsa = [];
+        infractiune = await Infractiuni.findAll({
+          where: { articol: articol },
+        });
 
-      if(infractiune && infractiune.length > 0) {
-      pedeapsa = await Pedepse.findAll({
-        where: { id_infractiune: infractiune[0].id, alineat: alineat },
-      });
-      }
+        let pedeapsa = [];
 
-      if(pedeapsa.length > 0) {
-        dosar[0].dataValues.pedeapsa = pedeapsa[0].nume_pe_scurt;
+        if (infractiune && infractiune.length > 0) {
+          pedeapsa = await Pedepse.findAll({
+            where: { id_infractiune: infractiune[0].id, alineat: alineat },
+          });
+        }
+
+        if (pedeapsa.length > 0) {
+          dosar[0].dataValues.pedeapsa = pedeapsa[0].nume_pe_scurt;
+        }
+      } else {
+        const articol = fapta[fapta.length - 1].nume_temei
+          .split(" ")[0]
+          .split(".")[1];
+        let alineat = 1;
+        if (fapta[fapta.length - 1].nume_temei.includes("alin.")) {
+          alineat = fapta[fapta.length - 1].nume_temei
+            .split(" ")[1]
+            .split(".")[1];
+        }
+
+        infractiune = await Infractiuni.findAll({
+          where: { articol: articol },
+        });
+
+        let pedeapsa = [];
+
+        if (infractiune && infractiune.length > 0) {
+          pedeapsa = await Pedepse.findAll({
+            where: { id_infractiune: infractiune[0].id, alineat: alineat },
+          });
+        }
+
+        if (pedeapsa.length > 0) {
+          dosar[0].dataValues.pedeapsa = pedeapsa[0].nume_pe_scurt;
+        }
       }
     }
 
-
-    if(infractiune.length > 0 && infractiune[0].copil) {
+    if (infractiune.length > 0 && infractiune[0].copil) {
       let parinte_infractiune = await Infractiuni.findAll({
-        where: {id: infractiune[0].copil}
-      })
-      dosar[0].dataValues.infractiuneParinte = parinte_infractiune[0]
+        where: { id: infractiune[0].copil },
+      });
+      dosar[0].dataValues.infractiuneParinte = parinte_infractiune[0];
     }
-    
 
     dosar[0].dataValues.parte = parte;
     dosar[0].dataValues.fapta = fapta;
-    dosar[0].dataValues.infractiune = infractiune
-    
+    dosar[0].dataValues.infractiune = infractiune;
 
     res.status(200).json({ dosar: dosar[0] });
   } catch (err) {
@@ -361,10 +387,12 @@ exports.addDosar = async (req, res, next) => {
   const errors = validationResult(req);
   let isContestatie = false;
 
-  if (req.body.calea_completa && req.body.calea_completa.includes("Soluţionare-Admitere contestaţie")) {
+  if (
+    req.body.calea_completa &&
+    req.body.calea_completa.includes("Soluţionare-Admitere contestaţie")
+  ) {
     isContestatie = true;
   }
-
 
   try {
     if (!errors.isEmpty) {
@@ -622,9 +650,10 @@ exports.addDosar = async (req, res, next) => {
     }
 
     if (
-      (req.body.data_expirarii_mandat && 
+      (req.body.data_expirarii_mandat &&
         req.body.nume_masura_preventiva.includes("control")) ||
-      req.body.nume_masura_preventiva && req.body.nume_masura_preventiva.includes("Control")
+      (req.body.nume_masura_preventiva &&
+        req.body.nume_masura_preventiva.includes("Control"))
     ) {
       isControlJudiciar = true;
     }
@@ -632,7 +661,8 @@ exports.addDosar = async (req, res, next) => {
     if (
       (req.body.data_expirarii_mandat &&
         req.body.nume_masura_preventiva.includes("arest")) ||
-        req.body.nume_masura_preventiva && req.body.nume_masura_preventiva.includes("Arest")
+      (req.body.nume_masura_preventiva &&
+        req.body.nume_masura_preventiva.includes("Arest"))
     ) {
       isArest = true;
     }
@@ -766,7 +796,10 @@ exports.addDosar = async (req, res, next) => {
     let admitere_contestatie = 0;
     let termen_contestatie = null;
 
-    if (req.body.calea_completa && req.body.calea_completa.includes("Soluţionare-Admitere contestaţie")) {
+    if (
+      req.body.calea_completa &&
+      req.body.calea_completa.includes("Soluţionare-Admitere contestaţie")
+    ) {
       admitere_contestatie = 1;
       termen_contestatie = formatDate(req.body.data_termen);
       numar = req.body.numar;
