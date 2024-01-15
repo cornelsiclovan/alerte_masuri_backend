@@ -81,6 +81,16 @@ exports.genereaza = async (req, res, next) => {
       textParteVatamata = "persoanelor vătămate " + parte_vatamata;
     }
 
+    console.log(req.body.autorul_faptei);
+
+
+
+    if(req.body.autorul_faptei !== null && !req.body.autorul_faptei.includes(",")) {
+      textParteVatamata += " și numitului " + req.body.autorul_faptei;
+    }else if(req.body.autorul_faptei !== null && req.body.autorul_faptei.includes(",")) {
+      textParteVatamata += " și numiților " + req.body.autorul_faptei;
+    }
+
     patchDocument(fs.readFileSync("template/clasare-insusita/template.docx"), {
       patches: {
         numar_dosar: {
