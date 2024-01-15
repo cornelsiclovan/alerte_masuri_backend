@@ -75,22 +75,35 @@ exports.genereaza = async (req, res, next) => {
 
     const nume_procuror_all_caps = nume_procuror.toUpperCase(); // DIN ECRIS
 
-    let textParteVatamata =  "persoanei vătămate " + parte_vatamata;
+    let textParteVatamata = "persoanei vătămate " + parte_vatamata;
 
-    if(parte_vatamata.includes(", ")){
+    if (parte_vatamata.includes(", ")) {
       textParteVatamata = "persoanelor vătămate " + parte_vatamata;
     }
 
-    let alin_3 = "În temeiul art. 275 alin. (5) rap. la art. 275 alin. (3) C.proc. pen. cheltuielile judiciare efectuate rămân în sarcina statului.";
+    let alin_3 =
+      "În temeiul art. 275 alin. (5) rap. la art. 275 alin. (3) C.proc. pen. cheltuielile judiciare efectuate rămân în sarcina statului.";
 
-    if(req.body.litera_articol_id === "9" || req.body.litera_articol_id === "10") {
-      alin_3 = "În  temeiul  art. 275  alin. (5) rap.  la art.  275 alin. (1) pct. 2 lit. b) C. proc. pen., cheltuielile judiciare în cuantum de 50 de lei urmează a fi suportate de persoana vătămată."
-    } 
+    if (
+      req.body.litera_articol_id === "9" ||
+      req.body.litera_articol_id === "10"
+    ) {
+      alin_3 =
+        "În  temeiul  art. 275  alin. (5) rap.  la art.  275 alin. (1) pct. 2 lit. b) C. proc. pen., cheltuielile judiciare în cuantum de 50 de lei urmează a fi suportate de persoana vătămată.";
+    }
 
-    if(req.body.autorul_faptei !== null && !req.body.autorul_faptei.includes(",")) {
-      textParteVatamata += " și numitului " + req.body.autorul_faptei;
-    }else if(req.body.autorul_faptei !== null && req.body.autorul_faptei.includes(",")) {
-      textParteVatamata += " și numiților " + req.body.autorul_faptei;
+    if (!req.body.autorul_faptei.includes("NECUNOSCUT")) {
+      if (
+        req.body.autorul_faptei !== null &&
+        !req.body.autorul_faptei.includes(",")
+      ) {
+        textParteVatamata += " și numitului " + req.body.autorul_faptei;
+      } else if (
+        req.body.autorul_faptei !== null &&
+        req.body.autorul_faptei.includes(",")
+      ) {
+        textParteVatamata += " și numiților " + req.body.autorul_faptei;
+      }
     }
 
     patchDocument(fs.readFileSync("template/clasare-insusita/template.docx"), {
