@@ -81,9 +81,11 @@ exports.genereaza = async (req, res, next) => {
       textParteVatamata = "persoanelor vătămate " + parte_vatamata;
     }
 
-    console.log(req.body.autorul_faptei);
+    let alin_3 = "În temeiul art. 275 alin. (5) rap. la art. 275 alin. (3) C.proc. pen. cheltuielile judiciare efectuate rămân în sarcina statului.";
 
-
+    if(req.body.litera_articol_id === "9" || req.body.litera_articol_id === "10") {
+      alin_3 = "În  temeiul  art. 275  alin. (5) rap.  la art.  275 alin. (1) pct. 2 lit. b) C. proc. pen., cheltuielile judiciare în cuantum de 50 de lei urmează a fi suportate de persoana vătămată."
+    } 
 
     if(req.body.autorul_faptei !== null && !req.body.autorul_faptei.includes(",")) {
       textParteVatamata += " și numitului " + req.body.autorul_faptei;
@@ -179,6 +181,16 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${textParteVatamata}`,
+              font: "Palatino Linotype",
+              size: 24,
+            }),
+          ],
+        },
+        alin_3: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${alin_3}`,
               font: "Palatino Linotype",
               size: 24,
             }),
