@@ -63,7 +63,7 @@ exports.genereaza = async (req, res, next) => {
 
     // rechizitoriu alcool sau lipsa permis
     if (infractiune.includes("335") || infractiune.includes("336")) {
-      if (situatie.includes("alcool")) {
+      if (situatie.includes("alcool") || situatie.includes("droguri")) {
         if(situatie.includes("aflându-se"))
         starea_de_fapt_partial = situatie.split("aflându-se")[0];
         if(situatie.includes("fiind"))
@@ -108,6 +108,16 @@ exports.genereaza = async (req, res, next) => {
       templateName = "template/rechi/template_336.docx";
     }
 
+    if (infractiune.includes("336") && infractiune.includes("2"))  {
+      //droguri
+      templateName = "template/rechi/template_droguri.docx";
+    }
+
+    if (infractiune.includes("335") && infractiune.includes("2"))  {
+      //permis suspendat sau anulat
+      templateName = "template/rechi/template_permis_suspendat_sau_anulat.docx";
+    }
+ 
     patchDocument(fs.readFileSync(templateName), {
       patches: {
         numar_dosar: {
