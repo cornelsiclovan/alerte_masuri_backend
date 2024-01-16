@@ -85,11 +85,16 @@ exports.genereaza = async (req, res, next) => {
       "În temeiul art. 275 alin. (5) rap. la art. 275 alin. (3) C.proc. pen. cheltuielile judiciare efectuate rămân în sarcina statului.";
 
     if (
-      req.body.litera_articol_id === "9" ||
-      req.body.litera_articol_id === "10"
+      req.body.litera_articol_id === "9"
     ) {
       alin_3 =
         "În  temeiul  art. 275  alin. (5) rap.  la art.  275 alin. (1) pct. 2 lit. b) C. proc. pen., cheltuielile judiciare în cuantum de 50 de lei urmează a fi suportate de persoana vătămată.";
+    }
+
+
+
+    if(req.body.litera_articol_id === "10") {
+      alin_3 = "În  temeiul  art. 275  alin. (5) rap.  la art.  275 alin. (1) pct. 2 lit. d C. proc. pen., cheltuielile judiciare în cuantum de 50 de lei vor fi suportate de către " + textParteVatamata  + " – 25 lei și numitul " + req.body.autorul_faptei + " - 25 lei.";
     }
 
     if (!req.body.autorul_faptei.includes("NECUNOSCUT")) {
