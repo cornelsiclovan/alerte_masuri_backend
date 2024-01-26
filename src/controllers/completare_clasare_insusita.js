@@ -71,7 +71,13 @@ exports.genereaza = async (req, res, next) => {
     const litera_articol_fara_text =
       LITERE_ARTICOL_LIBRARY[req.body.litera_articol_id]; // FORM SELECT DIN LIBRARY CU SEARCH AUTOCOMPLETE MULTISELECT
     const infractiune = req.body.fapta; // DIN ECRIS
-    const parte_vatamata = req.body.parti_vatamate; // DIN ECRIS
+    let parte_vatamata = req.body.parti_vatamate; // DIN ECRIS
+
+    console.log(parte_vatamata)
+
+    if(!parte_vatamata) {
+      parte_vatamata = "";
+    }
 
     const nume_procuror_all_caps = nume_procuror.toUpperCase(); // DIN ECRIS
 

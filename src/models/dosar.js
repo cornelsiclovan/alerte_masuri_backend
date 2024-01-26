@@ -10,9 +10,17 @@ const Dosar = sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
+    id_dosar: {
+      type: Sequelize.INTEGER,
+      allowNull: true
+    },  
     numar: {
       type: Sequelize.STRING,
       allowNull: false,
+    },
+    numar_fost: {
+      type: Sequelize.STRING,
+      allowNull: false
     },
     isArest: {
       type: Sequelize.BOOLEAN,

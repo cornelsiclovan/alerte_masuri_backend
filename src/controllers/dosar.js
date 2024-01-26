@@ -137,6 +137,7 @@ exports.getDosare = async (req, res, next) => {
         return {
           id: dosar.id,
           numar: dosar.numar,
+          numar_fost: dosar.numar_fost,
           isControlJudiciar: dosar.isControlJudiciar,
           isArest: dosar.isArest,
           isSechestru: dosar.isSechestru,
@@ -807,7 +808,9 @@ exports.addDosar = async (req, res, next) => {
     }
 
     const dosar = await Dosar.create({
+      id_dosar: req.body.id,
       numar: numar,
+      numar_fost: req.body.numar_fost,
       data: data,
       isSechestru: isSechestru,
       isArest: isArest,

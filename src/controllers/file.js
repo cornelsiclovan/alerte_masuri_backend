@@ -9,7 +9,9 @@ exports.getFileByDosarName = async (req, res, next) => {
     "/" +
     req.params.dosar_numar.split("-")[1] +
     "/" +
-    req.params.dosar_numar.split("-")[2];
+    req.params.dosar_numar.split("-")[2] +
+    "/" +
+    req.params.dosar_numar.split("-")[3]
 
   try {
     fileNames = await File.findAll({
