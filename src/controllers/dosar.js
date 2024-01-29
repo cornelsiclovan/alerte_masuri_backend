@@ -41,6 +41,7 @@ exports.getDosareCuAc = async (req, res, next) => {
         return {
           id: dosar.id,
           numar: dosar.numar,
+          numar_fost: dosar.numar_fost,
           isControlJudiciar: dosar.isControlJudiciar,
           isArest: dosar.isArest,
           isSechestru: dosar.isSechestru,
