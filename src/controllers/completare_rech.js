@@ -20,11 +20,17 @@ exports.genereaza = async (req, res, next) => {
 
     let autor_minor_major = "major"
 
+    let autor_data_nastere;
+
     if(autor && autor.minor) {
       if(autor.minor === '1') {
         autor_minor_major = "minor"
       } 
+      
+      autor_data_nastere = autor.data_nastere.split(" ")[0]
+    
     }
+
 
     let starea_de_fapt_data = situatie.split(",")[0].split(" ")[3];
 
@@ -257,7 +263,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.data_nasterii}` || "--------",
+              text: `${autor_data_nastere}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
