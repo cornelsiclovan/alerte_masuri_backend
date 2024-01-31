@@ -32,6 +32,8 @@ exports.genereaza = async (req, res, next) => {
     let starea_de_fapt_reformulare =
       situatie.charAt(0).toLowerCase() + situatie.slice(1);
 
+    let starea_de_fapt_lower_case = situatie.charAt(0).toLowerCase() + situatie.slice(1);
+
     if (
       starea_de_fapt_reformulare.charAt(
         starea_de_fapt_reformulare.length - 1
@@ -156,6 +158,16 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${situatie}`,
+              font: "Times New Roman",
+              size: 24,
+            }),
+          ],
+        },
+        starea_de_fapt_lower_case: {
+          type: PatchType.PARAGRAPH,
+          children: [
+            new TextRun({
+              text: `${starea_de_fapt_lower_case}`,
               font: "Times New Roman",
               size: 24,
             }),
