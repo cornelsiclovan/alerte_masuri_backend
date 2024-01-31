@@ -26,8 +26,8 @@ exports.genereaza = async (req, res, next) => {
       if(autor.minor === '1') {
         autor_minor_major = "minor"
       } 
-      
-      autor_data_nastere = autor.data_nastere.split(" ")[0]
+      if(autor.data_nastere)
+        autor_data_nastere = autor.data_nastere.split(" ")[0]
     
     }
 
