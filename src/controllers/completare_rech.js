@@ -360,7 +360,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.judet_nastere}` || "--------",
+              text: `${judet_nastere}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
