@@ -15,22 +15,58 @@ exports.genereaza = async (req, res, next) => {
     const situatie = req.body.situatie || "------------------";
     let infractiune = req.body.fapta || "";
 
-    let autor = await Part.findOne({ where: { nume: autorul_faptei, numar_dosar: numar_dosar} });
+    let autor = await Part.findOne({
+      where: { nume: autorul_faptei, numar_dosar: numar_dosar },
+    });
 
-
-    let autor_minor_major = "major"
+    let autor_minor_major = "major";
 
     let autor_data_nastere;
 
-    if(autor && autor.minor) {
-      if(autor.minor === '1') {
-        autor_minor_major = "minor"
-      } 
-      if(autor.data_nastere)
-        autor_data_nastere = autor.data_nastere.split(" ")[0]
-    
-    }
+    let cnp = "";
+    let tata = "";
+    let mama = "";
+    let locul_nasterii = "";
+    let judet_nastere = "";
+    let localitate = "";
+    let judet = "";
+    let strada = "";
+    let numar = "";
+    let bloc = "";
+    let scara = "";
+    let apartament = "";
+    let minor_major = "";
+    let stare_civila = "";
+    let studii = "";
+    let ocupatie = "";
 
+    if (autor && autor.minor) {
+      if (autor.minor === "1") {
+        autor_minor_major = "minor";
+      }
+      if (autor.data_nastere)
+        autor_data_nastere = autor.data_nastere.split(" ")[0];
+
+      if (autor.cnp) {
+        cnp = autor.cnp;
+      }
+
+      tata = autor.tata;
+      mama = autor.mama;
+      locul_nasterii = autor.locul_nasterii;
+      judet_nastere = autor.judet_nastere;
+      localitate = autor.localitate;
+      judet = autor.judet;
+      strada = autor.strada;
+      numar = autor.numar;
+      bloc = autor.bloc;
+      scara = autor.scara;
+      apartament = autor.apartament;
+
+      stare_civila = autor.stare_civila;
+      studii = autor.studii;
+      ocupatie = autor.ocupatie;
+    }
 
     let starea_de_fapt_data = situatie.split(",")[0].split(" ")[3];
 
@@ -38,7 +74,8 @@ exports.genereaza = async (req, res, next) => {
     let starea_de_fapt_reformulare =
       situatie.charAt(0).toLowerCase() + situatie.slice(1);
 
-    let starea_de_fapt_lower_case = situatie.charAt(0).toLowerCase() + situatie.slice(1);
+    let starea_de_fapt_lower_case =
+      situatie.charAt(0).toLowerCase() + situatie.slice(1);
 
     if (
       starea_de_fapt_reformulare.charAt(
@@ -72,11 +109,10 @@ exports.genereaza = async (req, res, next) => {
     // rechizitoriu alcool sau lipsa permis
     if (infractiune.includes("335") || infractiune.includes("336")) {
       if (situatie.includes("alcool") || situatie.includes("droguri")) {
-        if(situatie.includes("aflându-se"))
-        starea_de_fapt_partial = situatie.split("aflându-se")[0];
-        if(situatie.includes("fiind"))
-        starea_de_fapt_partial = situatie.split("fiind")[0];
-      
+        if (situatie.includes("aflându-se"))
+          starea_de_fapt_partial = situatie.split("aflându-se")[0];
+        if (situatie.includes("fiind"))
+          starea_de_fapt_partial = situatie.split("fiind")[0];
       }
       console.log("335");
       if (situatie.includes("fără")) {
@@ -116,16 +152,16 @@ exports.genereaza = async (req, res, next) => {
       templateName = "template/rechi/template_336.docx";
     }
 
-    if (infractiune.includes("336") && infractiune.includes("2"))  {
+    if (infractiune.includes("336") && infractiune.includes("2")) {
       //droguri
       templateName = "template/rechi/template_droguri.docx";
     }
 
-    if (infractiune.includes("335") && infractiune.includes("2"))  {
+    if (infractiune.includes("335") && infractiune.includes("2")) {
       //permis suspendat sau anulat
       templateName = "template/rechi/template_permis_suspendat_sau_anulat.docx";
     }
- 
+
     patchDocument(fs.readFileSync(templateName), {
       patches: {
         numar_dosar: {
@@ -233,7 +269,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.cnp}` || "--------",
+              text: `${cnp}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -243,7 +279,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.tata}` || "--------",
+              text: `${tata}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -253,7 +289,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.mama}` || "--------",
+              text: `${mama}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -273,7 +309,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.locul_nasterii}` || "--------",
+              text: `${locul_nasterii}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -293,7 +329,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.localitate}` || "--------",
+              text: `${localitate}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -303,7 +339,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.judet}` || "--------",
+              text: `${judet}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -313,7 +349,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.strada}` || "--------",
+              text: `${strada}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -323,7 +359,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.numar}` || "--------",
+              text: `${numar}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -333,7 +369,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.bloc}` || "--------",
+              text: `${bloc}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -343,7 +379,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.scara}` || "--------",
+              text: `${scara}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -353,7 +389,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.apartament}` || "--------",
+              text: `${apartament}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -373,7 +409,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.stare_civila}` || "--------",
+              text: `${stare_civila}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -383,7 +419,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.studii}` || "--------",
+              text: `${studii}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
@@ -393,7 +429,7 @@ exports.genereaza = async (req, res, next) => {
           type: PatchType.PARAGRAPH,
           children: [
             new TextRun({
-              text: `${autor.ocupatie}` || "--------",
+              text: `${ocupatie}` || "--------",
               font: "Times New Roman",
               size: 24,
             }),
