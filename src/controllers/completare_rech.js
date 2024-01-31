@@ -51,21 +51,62 @@ exports.genereaza = async (req, res, next) => {
         cnp = autor.cnp;
       }
 
-      tata = autor.tata;
-      mama = autor.mama;
-      locul_nasterii = autor.locul_nasterii;
-      judet_nastere = autor.judet_nastere;
-      localitate = autor.localitate;
-      judet = autor.judet;
-      strada = autor.strada;
-      numar = autor.numar;
-      bloc = autor.bloc;
-      scara = autor.scara;
-      apartament = autor.apartament;
+      if(autor.tata) {
+        tata = autor.tata;
+      }
 
-      stare_civila = autor.stare_civila;
-      studii = autor.studii;
-      ocupatie = autor.ocupatie;
+      if(autor.mama) {
+        tata = autor.mama;
+      }
+
+      if(autor.locul_nasterii) {
+        locul_nasterii = autor.locul_nasterii;
+      }
+
+      if(autor.judet_nastere) {
+        judet_nastere = autor.judet_nastere;
+      }
+
+      if(autor.localitate) {
+        localitate = autor.localitate;
+      }
+
+      if(autor.judet) {
+        judet = autor.judet;
+      }
+     
+      if(autor.strada) {
+        strada = autor.strada;
+      }
+      
+      if(autor.numar) {
+        numar = autor.numar;
+      }
+     
+      if(autor.bloc) {
+        bloc = autor.bloc;
+      }
+
+      if(autor.scara) {
+        scara = autor.scara;
+      }
+      
+      if(autor.apartament) {
+        apartament = autor.apartament;
+      }
+      
+      if(autor.stare_civila) {
+        stare_civila = autor.stare_civila;
+      }
+     
+      if(autor.studii) {
+        studii = autor.studii;
+      }
+      
+      if(autor.ocupatie) {
+        ocupatie = autor.ocupatie;
+      }
+      
     }
 
     let starea_de_fapt_data = situatie.split(",")[0].split(" ")[3];
