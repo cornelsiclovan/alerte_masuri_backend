@@ -83,8 +83,11 @@ exports.genereaza = async (req, res, next) => {
 
     let textParteVatamata = "persoanei vătămate " + parte_vatamata;
 
+    let textParteVatamata_chelt = "persoana vătămată " + parte_vatamata;
+
     if (parte_vatamata.includes(", ")) {
       textParteVatamata = "persoanelor vătămate " + parte_vatamata;
+      textParteVatamata_chelt = "pesoanele vătămate " + parte_vatamata;
     }
 
     let alin_3 =
@@ -100,7 +103,7 @@ exports.genereaza = async (req, res, next) => {
 
 
     if(req.body.litera_articol_id === "10") {
-      alin_3 = "În  temeiul  art. 275  alin. (5) rap.  la art.  275 alin. (1) pct. 2 lit. d C. proc. pen., cheltuielile judiciare în cuantum de 50 de lei vor fi suportate de către " + textParteVatamata  + " – 25 lei și numitul " + req.body.autorul_faptei + " - 25 lei.";
+      alin_3 = "În  temeiul  art. 275  alin. (5) rap.  la art.  275 alin. (1) pct. 2 lit. d C. proc. pen., cheltuielile judiciare în cuantum de 50 de lei vor fi suportate de către " + textParteVatamata_chelt  + " – 25 lei și numitul " + req.body.autorul_faptei + " - 25 lei.";
     }
 
     if (!req.body.autorul_faptei.includes("NECUNOSCUT")) {
