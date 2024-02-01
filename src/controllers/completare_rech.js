@@ -35,17 +35,19 @@ exports.genereaza = async (req, res, next) => {
     let bloc = "";
     let scara = "";
     let apartament = "";
-    let minor_major = "";
     let stare_civila = "";
     let studii = "";
     let ocupatie = "";
 
-    if (autor && autor.minor) {
-      if (autor.minor === "1") {
+    if (autor) {
+    
+      if (autor.minor && autor.minor === "1") {
         autor_minor_major = "minor";
       }
-      if (autor.data_nastere)
-        autor_data_nastere = autor.data_nastere.split(" ")[0];
+
+
+      if (autor.data_nasterii)
+        autor_data_nastere = autor.data_nasterii.split(" ")[0];
 
       if (autor.cnp) {
         cnp = autor.cnp;
@@ -71,6 +73,10 @@ exports.genereaza = async (req, res, next) => {
         localitate = autor.localitate;
       }
 
+      if(autor.localitate === "" && autor.sector !== "") {
+        localitate = autor.sector;
+      }
+
       if(autor.judet) {
         judet = autor.judet;
       }
@@ -78,6 +84,7 @@ exports.genereaza = async (req, res, next) => {
       if(autor.strada) {
         strada = autor.strada;
       }
+
       
       if(autor.numar) {
         numar = autor.numar;
@@ -100,11 +107,11 @@ exports.genereaza = async (req, res, next) => {
       }
      
       if(autor.studii) {
-        studii = autor.studii;
+        studii = autor.studii.toLowerCase();
       }
       
       if(autor.ocupatie) {
-        ocupatie = autor.ocupatie;
+        ocupatie = autor.ocupatie.toLowerCase();
       }
       
     }

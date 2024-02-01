@@ -42,6 +42,10 @@ const Part = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
+    strada: {
+      type:Sequelize.STRING,
+      allowNull: true,
+    },
     sector: {
       type: Sequelize.STRING,
       allowNull: true,

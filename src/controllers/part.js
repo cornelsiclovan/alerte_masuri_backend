@@ -22,6 +22,8 @@ exports.getPArtByDosarNumber = async (req, res, next) => {
   }
 };
 
+
+
 exports.postPart = async (req, res, next) => {
   try {
     const part = await Part.create({
@@ -33,6 +35,7 @@ exports.postPart = async (req, res, next) => {
       tara: req.body.tara,
       judet: req.body.judet,
       localitate: req.body.localitate,
+      strada: req.body.strada,
       sector: req.body.sector,
       numar: req.body.numar_adresa,
       bloc: req.body.bloc,
