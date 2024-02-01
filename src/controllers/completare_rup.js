@@ -114,7 +114,7 @@ exports.genereaza = async (req, res, next) => {
             new TextRun({
               text: `${numar_dosar}`,
               bold: true,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -124,7 +124,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${data_rup}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -134,7 +134,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${nume_procuror}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -144,7 +144,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${infractiune}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -154,7 +154,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${pedeapsa}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -164,7 +164,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${situatie}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -174,7 +174,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${parte_vatamata}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -184,7 +184,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${comunicare_parti}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -194,7 +194,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${audiat}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -204,7 +204,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${fisa_cazier}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
             }),
           ],
@@ -214,7 +214,7 @@ exports.genereaza = async (req, res, next) => {
           children: [
             new TextRun({
               text: `${nume_procuror_all_caps}`,
-              font: "Palatino Linotype",
+              font: "Times New Roman",
               size: 24,
               bold: true,
             }),
