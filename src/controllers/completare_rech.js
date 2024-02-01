@@ -2,7 +2,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 const path = require("path");
 
-const { TextRun, patchDocument, PatchType } = require("docx");
+const { TextRun, patchDocument, PatchType, Spacing } = require("docx");
 const { now } = require("mongoose");
 const File = require("../models/file");
 const Part = require("../models/part");
