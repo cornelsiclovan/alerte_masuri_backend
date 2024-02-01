@@ -11,9 +11,15 @@ exports.genereaza = async (req, res, next) => {
   try {
     const nume_procuror = req.body.nume_procuror; // DIN ECRIS
     const numar_dosar = req.body.numar_dosar; // DIN ECRIS
-    const autorul_faptei = req.body.autorul_faptei || "-----------------";
+    let autorul_faptei = req.body.autorul_faptei || "-----------------";
     const situatie = req.body.situatie || "------------------";
     let infractiune = req.body.fapta || "";
+
+  
+
+    if(autorul_faptei && autorul_faptei.includes(",")) {
+      autorul_faptei = autorul_faptei.split(",")[0];
+    }
 
     let autor = await Part.findOne({
       where: { nume: autorul_faptei, numar_dosar: numar_dosar },
@@ -38,6 +44,8 @@ exports.genereaza = async (req, res, next) => {
     let stare_civila = "";
     let studii = "";
     let ocupatie = "";
+
+
 
     if (autor) {
     
@@ -108,6 +116,10 @@ exports.genereaza = async (req, res, next) => {
      
       if(autor.studii) {
         studii = autor.studii.toLowerCase();
+      }
+
+      if(studii.includes("studii")){
+        studii = studii.split(" ")[1];
       }
       
       if(autor.ocupatie) {
