@@ -167,13 +167,10 @@ exports.getStoc = async (req, res, next) => {
 
   dosareInEvidentaActiva = dosareInEvidentaActiva + totalDosCuAc;
 
-  if(stoc) {
+  if(stoc && stoc[0] && stoc[0].dataValues) {
     stoc[0].dataValues.dosareInEvidentaActiva = dosareInEvidentaActiva;
     stoc[0].dataValues.dosareInEvidentaPasiva = stoc[0].in_lucru - dosareInEvidentaActiva
   }
-  stoc[0].dataValues.dosareInEvidentaActiva = dosareInEvidentaActiva;
-  stoc[0].dataValues.dosareInEvidentaPasiva = stoc[0].in_lucru - dosareInEvidentaActiva
-
 
 
   res.status(200).json({
