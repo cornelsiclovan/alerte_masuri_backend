@@ -8,6 +8,7 @@ const router = express.Router();
 router.get("/", isAuth, dosarController.getDosare);
 router.get("/dosareCuAc", isAuth, dosarController.getDosareCuAc);
 
+router.get("/dosareCuAcPeProcuror", isAuth, dosarController.getNrDosareCuAcPeProcuror);
 
 router.get("/:dosarId", isAuth, dosarController.getDosarById);
 

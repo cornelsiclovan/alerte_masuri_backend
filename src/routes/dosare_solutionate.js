@@ -17,5 +17,27 @@ router.post(
 router.post("/cleanDateDosare", isAuth, dosareSolutionateController.cleanDateDosare);
 
 
+router.get("/stoc", isAuth, dosareSolutionateController.getStoc);
+
+
+router.post(
+  "/stoc",
+  isAuth,
+  dosareSolutionateController.addStoc
+);
+
+router.post("/cleanDateDosare/stoc", isAuth, dosareSolutionateController.cleanStoc);
+
+router.get("/incarcatura", isAuth, dosareSolutionateController.getIncarcatura);
+
+
+router.post(
+  "/incarcatura",
+  isAuth,
+  dosareSolutionateController.addIncarcatura
+);
+
+router.post("/cleanDateDosare/incarcatura", isAuth, dosareSolutionateController.cleanIncarcatura);
+
 module.exports = router;
   

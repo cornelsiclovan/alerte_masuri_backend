@@ -10,6 +10,8 @@ const Doing = require("./src/models/fapte");
 const Part = require("./src/models/part");
 const File = require("./src/models/file");
 const Pedepse = require("./src/models/pedepse");
+const Stoc = require("./src/models/stoc");
+const Incarcatura = require("./src/models/incarcatura");
 
 const authRoutes = require("./src/routes/auth");
 const dosRoutes = require("./src/routes/dosare");
@@ -23,6 +25,7 @@ const doingRoutes = require("./src/routes/doing");
 const partRoutes = require("./src/routes/part");
 const fileRoutes = require("./src/routes/file");
 const Infractiuni = require("./src/models/infractiuni");
+
 
 
 dotenv.config();

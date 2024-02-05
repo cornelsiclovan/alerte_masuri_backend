@@ -7,8 +7,47 @@ const Part = require("../models/part");
 const Doing = require("../models/fapte");
 const Pedepse = require("../models/pedepse");
 const Infractiuni = require("../models/infractiuni");
+const Incarcatura = require("../models/incarcatura");
 
 const op = Sequelize.Op;
+
+exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
+  let queryObject = {};
+  let procurori;
+  let dosare;
+
+  let procurorId = req.query.procurorId;
+
+  if (procurorId === "1") {
+    queryObject.procurorId = req.userId;
+  }
+
+  try {
+    procurori = await User.findAll({ where: { isProcuror: 1 } });
+
+    let situatie_cu_ac = await Promise.all(
+      procurori.map(async (procuror) => {
+        let queryObject = { institutia_curenta: { [op.ne]: null } };
+        queryObject.procurorId = procuror.id;
+        const countDosCuAc = await Dosar.count({ where: queryObject });
+
+        const countDosCuAn = await Incarcatura.findOne({where: {id_procuror: procuror.id}})
+      
+          return {
+            procurorId: procuror.id,
+            numeProcuror: procuror.name,
+            number_dos_cu_an: countDosCuAn ? countDosCuAn.number_dos_cu_an : 0 ,
+            number_dos_cu_ac: countDosCuAc || 0,
+          };
+      
+      })
+    );
+
+    res.status(200).json({ situatie_cu_ac: situatie_cu_ac });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.getDosareCuAc = async (req, res, next) => {
   let dosare = [];
@@ -207,14 +246,10 @@ exports.getDosarById = async (req, res, next) => {
 
     if (fapta[fapta.length - 1]) {
       if (fapta[fapta.length - 1].nume_temei.includes("199")) {
-        const articol = fapta[0].nume_temei
-          .split(" ")[0]
-          .split(".")[1];
+        const articol = fapta[0].nume_temei.split(" ")[0].split(".")[1];
         let alineat = 1;
         if (fapta[0].nume_temei.includes("alin.")) {
-          alineat = fapta[0].nume_temei
-            .split(" ")[1]
-            .split(".")[1];
+          alineat = fapta[0].nume_temei.split(" ")[1].split(".")[1];
         }
 
         infractiune = await Infractiuni.findAll({
