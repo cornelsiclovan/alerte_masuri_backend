@@ -25,6 +25,8 @@ exports.getPArtByDosarNumber = async (req, res, next) => {
 
 
 exports.postPart = async (req, res, next) => {
+
+
   try {
     const part = await Part.create({
       tip_solutie_propusa: req.body.tip_solutie_propusa,
@@ -56,6 +58,7 @@ exports.postPart = async (req, res, next) => {
       judet_nastere: req.body.judet_nastere,
       minor: req.body.minor
     });
+
 
     res.status(200).json({
       part: part,

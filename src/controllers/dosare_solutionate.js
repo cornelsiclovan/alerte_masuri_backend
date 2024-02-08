@@ -216,6 +216,8 @@ exports.getIncarcatura = async (req, res, next) => {
     queryObject.procurorId = req.userId;
   }
 
+
+
   try {
     const incarcatura = await Incarcatura.findAll({ where: queryObject });
 
@@ -243,13 +245,15 @@ exports.getIncarcatura = async (req, res, next) => {
 };
 
 exports.addIncarcatura = async (req, res, next) => {
-  
+  let queryObject = { institutia_curenta: { [op.ne]: null } };
+  queryObject.numar = req.body.numar_dosar;
+
   try {
     let incarcatura = await Incarcatura.findOne({where: {id_procuror: req.body.id_procuror}})
 
+    let dosareCuAc = await Dosar.findAll({where: queryObject})
 
-
-    if(!incarcatura) {
+    if(!incarcatura && dosareCuAc && dosareCuAc.length ==0) {
       
       incarcatura = await Incarcatura.create({
         id_procuror: req.body.id_procuror,
@@ -258,13 +262,12 @@ exports.addIncarcatura = async (req, res, next) => {
       });
 
       console.log(incarcatura)
-    }else {
+    }else if(dosareCuAc && dosareCuAc.length ==0){
   
       incarcatura.number_dos_cu_an = +incarcatura.number_dos_cu_an + 1;
       await incarcatura.save();
     }
 
-    console.log(incarcatura);
 
     res.status(200).json({
       incarcatura: incarcatura,
