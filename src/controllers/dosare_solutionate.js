@@ -219,7 +219,7 @@ exports.getIncarcatura = async (req, res, next) => {
 
 
   try {
-    const incarcatura = await Incarcatura.findAll({ where: queryObject });
+    const incarcatura = await Incarcatura.findAll({ where: queryObject, order: ['number_dos_cu_ac'] });
 
     let incarcaturaToSend = await Promise.all(
       incarcatura.map(async (itemData) => {
@@ -237,6 +237,8 @@ exports.getIncarcatura = async (req, res, next) => {
         };
       })
     );
+
+
 
     res.status(200).json({ incarcatura: incarcaturaToSend });
   } catch (err) {

@@ -40,8 +40,15 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
             number_dos_cu_ac: countDosCuAc || 0,
           };
       
-      })
+      })  
     );
+
+    situatie_cu_ac = situatie_cu_ac.sort((a,b) => {
+    
+      if(a.number_dos_cu_ac > b.number_dos_cu_ac) {
+        return -1;
+      }else return 1
+    })
 
     res.status(200).json({ situatie_cu_ac: situatie_cu_ac });
   } catch (err) {
