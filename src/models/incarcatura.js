@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../util/database");
 
-const Incarcatura  = sequelize.define(
+const Incarcatura = sequelize.define(
   "incarcatura",
   {
     id: {
@@ -19,8 +19,12 @@ const Incarcatura  = sequelize.define(
       allowNull: false,
     },
     number_dos_cu_an: {
-        type: Sequelize.STRING,
-        allowNull: false,
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    upp: {
+      type: Sequelize.STRING,
+      allowNull: false,
     },
   },
   {

@@ -255,18 +255,28 @@ exports.addIncarcatura = async (req, res, next) => {
 
     let dosareCuAc = await Dosar.findAll({where: queryObject})
 
+    let addUpp = 0;
+
+    if (req.body.invest_proprie === "True") {
+      //UPP
+      addUpp = 1;
+    }
+
+
     if(!incarcatura && dosareCuAc && dosareCuAc.length ==0) {
       
       incarcatura = await Incarcatura.create({
         id_procuror: req.body.id_procuror,
         number_dos_cu_ac: 0,
         number_dos_cu_an: 1,
+        upp: addUpp
       });
 
       console.log(incarcatura)
     }else if(dosareCuAc && dosareCuAc.length ==0){
   
       incarcatura.number_dos_cu_an = +incarcatura.number_dos_cu_an + 1;
+      incarcatura.upp = +incarcatura.upp + addUpp;
       await incarcatura.save();
     }
 

@@ -16,14 +16,20 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
   let procurori;
   let dosare;
 
+  console.log("here");
+
   let procurorId = req.query.procurorId;
 
+  console.log(procurorId)
+
   if (procurorId === "1") {
-    queryObject.procurorId = req.userId;
+    queryObject.id = req.userId;
   }
 
+  queryObject.isProcuror = 1;
+
   try {
-    procurori = await User.findAll({ where: { isProcuror: 1 } });
+    procurori = await User.findAll({ where: queryObject});
 
     let situatie_cu_ac = await Promise.all(
       procurori.map(async (procuror) => {
@@ -31,13 +37,20 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
         queryObject.procurorId = procuror.id;
         const countDosCuAc = await Dosar.count({ where: queryObject });
 
+        queryObject.tip_solutie_propusa = "UPP";
+
+        const countDosCuAcUpp = await Dosar.count({where: queryObject});
+
         const countDosCuAn = await Incarcatura.findOne({where: {id_procuror: procuror.id}})
+        
       
           return {
             procurorId: procuror.id,
             numeProcuror: procuror.name,
             number_dos_cu_an: countDosCuAn ? countDosCuAn.number_dos_cu_an : 0 ,
             number_dos_cu_ac: countDosCuAc || 0,
+            number_dos_cu_ac_upp: countDosCuAcUpp || 0,
+            number_dos_cu_an_upp: countDosCuAn ? countDosCuAn.upp : 0 ,
           };
       
       })  
