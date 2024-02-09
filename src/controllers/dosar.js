@@ -39,7 +39,42 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
 
         queryObject.tip_solutie_propusa = "UPP";
 
-        const countDosCuAcUpp = await Dosar.count({where: queryObject});
+        let countDosCuAcUpp = 0;
+
+        const dosCuAcUpp = await Dosar.findAll({where: queryObject});
+
+        let queryObjectIntrate = { institutia_curenta: null };
+        queryObjectIntrate.isArest = "0";
+        queryObjectIntrate.isControlJudiciar = "0";
+        queryObjectIntrate.isArest = "0";
+        queryObjectIntrate.tip_solutie_propusa = "UPP";
+        queryObjectIntrate.termen_contestatie = null;
+        queryObjectIntrate.procurorId = procuror.id;
+
+        const dosIntrateUpp = await Dosar.findAll({where: queryObjectIntrate})
+        let dosareAcUPP = [];
+
+        dosCuAcUpp.map(async (dos) => {
+          dosareAcUPP.push(dos);
+
+          countDosCuAcUpp = countDosCuAcUpp + 1;
+        });
+
+
+
+        dosIntrateUpp.map((dosInt) => {
+          let exista = false;
+          dosareAcUPP.map((dosACUpp) => {
+            if(dosInt.numar === dosACUpp.numar) {
+              exista = true;
+            }
+          });
+          if(!exista) {
+            countDosCuAcUpp = countDosCuAcUpp + 1
+          } 
+        })
+
+
 
         const countDosCuAn = await Incarcatura.findOne({where: {id_procuror: procuror.id}})
         
