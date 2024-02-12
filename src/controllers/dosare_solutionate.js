@@ -2,6 +2,7 @@ const Dosar = require("../models/dosar");
 const DosareSolutionate = require("../models/dosare_solutionate");
 const Incarcatura = require("../models/incarcatura");
 const Stoc = require("../models/stoc");
+const Upp = require("../models/upp");
 const User = require("../models/user");
 const Sequelize = require("sequelize");
 const op = Sequelize.Op;
@@ -318,3 +319,37 @@ exports.cleanIncarcatura = async (req, res, next) => {
     message: "clean incarcatura pe procuror",
   });
 };
+
+exports.addUpp = async (req, res, next) => {
+  console.log(req.body);
+
+  try {
+    const upp = await Upp.create({
+      id_procuror: req.body.id_procuror,
+      upp: req.body.nr_upp,
+    });
+
+    if(upp) {
+      res.status(200).json({
+        upp: upp,
+      });
+    } else {
+      const error = new Error("cannot insert upp");
+      error.statusCode = 422;
+      throw error;
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+exports.cleanUpp = async (req, res, next) => {
+  console.log("test")
+  await Upp.destroy({
+    where: {}
+  });
+
+  res.status(200).json({
+    message: "clean upp",
+  });
+}

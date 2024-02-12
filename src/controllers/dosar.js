@@ -8,6 +8,7 @@ const Doing = require("../models/fapte");
 const Pedepse = require("../models/pedepse");
 const Infractiuni = require("../models/infractiuni");
 const Incarcatura = require("../models/incarcatura");
+const Upp = require("../models/upp");
 
 const op = Sequelize.Op;
 
@@ -16,11 +17,9 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
   let procurori;
   let dosare;
 
-  console.log("here");
-
   let procurorId = req.query.procurorId;
 
-  console.log(procurorId)
+
 
   if (procurorId === "1") {
     queryObject.id = req.userId;
@@ -61,7 +60,7 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
           countDosCuAcUpp = countDosCuAcUpp + 1;
         });
 
-        console.log(procuror.id, countDosCuAcUpp, dosareAcUPP.length);
+     
 
 
         dosIntrateUpp.map((dosInt) => {
@@ -72,25 +71,29 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
              
             }
           });
-          console.log(exista);
+         
           if(!exista) {
+           
             countDosCuAcUpp = countDosCuAcUpp + 1
           } 
         })
 
-        console.log(procuror.id, countDosCuAcUpp, dosareAcUPP.length);
-
-
+        if(procuror.id === 127) {
+          console.log( procuror.name)
+          console.log(countDosCuAcUpp);
+        }
 
         const countDosCuAn = await Incarcatura.findOne({where: {id_procuror: procuror.id}})
-        
+        const uppObject = await Upp.findOne({where: {id_procuror: procuror.id}});
       
+
           return {
             procurorId: procuror.id,
             numeProcuror: procuror.name,
             number_dos_cu_an: countDosCuAn ? countDosCuAn.number_dos_cu_an : 0 ,
             number_dos_cu_ac: countDosCuAc || 0,
             number_dos_cu_ac_upp: countDosCuAcUpp || 0,
+            upp: uppObject ? uppObject.upp : 0,
             number_dos_cu_an_upp: countDosCuAn ? countDosCuAn.upp : 0 ,
           };
       
