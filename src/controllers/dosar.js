@@ -42,8 +42,9 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
         let countDosCuAcUpp = 0;
 
         const dosCuAcUpp = await Dosar.findAll({where: queryObject});
+  
 
-        let queryObjectIntrate = { institutia_curenta: null };
+        let queryObjectIntrate = { institutia_curenta: { [op.eq]: null } };
         queryObjectIntrate.isArest = "0";
         queryObjectIntrate.isControlJudiciar = "0";
         queryObjectIntrate.isArest = "0";
@@ -60,19 +61,24 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
           countDosCuAcUpp = countDosCuAcUpp + 1;
         });
 
+        console.log(procuror.id, countDosCuAcUpp, dosareAcUPP.length);
 
 
         dosIntrateUpp.map((dosInt) => {
           let exista = false;
-          dosareAcUPP.map((dosACUpp) => {
-            if(dosInt.numar === dosACUpp.numar) {
+          dosareAcUPP.map((dos) => {
+            if(dosInt.numar === dos.numar) {
               exista = true;
+             
             }
           });
+          console.log(exista);
           if(!exista) {
             countDosCuAcUpp = countDosCuAcUpp + 1
           } 
         })
+
+        console.log(procuror.id, countDosCuAcUpp, dosareAcUPP.length);
 
 
 

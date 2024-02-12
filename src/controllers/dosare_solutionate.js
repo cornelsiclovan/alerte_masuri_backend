@@ -159,19 +159,18 @@ exports.getStoc = async (req, res, next) => {
   let queryObject = { institutia_curenta: { [op.ne]: null } };
 
   const incarcatura = await Incarcatura.findAll({});
-  const totalDosCuAc = await Dosar.count({ where: queryObject }); 
-  incarcatura.map(inc => {
-    dosareInEvidentaActiva = dosareInEvidentaActiva + +inc.number_dos_cu_an 
-  })
-
+  const totalDosCuAc = await Dosar.count({ where: queryObject });
+  incarcatura.map((inc) => {
+    dosareInEvidentaActiva = dosareInEvidentaActiva + +inc.number_dos_cu_an;
+  });
 
   dosareInEvidentaActiva = dosareInEvidentaActiva + totalDosCuAc;
 
-  if(stoc && stoc[0] && stoc[0].dataValues) {
+  if (stoc && stoc[0] && stoc[0].dataValues) {
     stoc[0].dataValues.dosareInEvidentaActiva = dosareInEvidentaActiva;
-    stoc[0].dataValues.dosareInEvidentaPasiva = stoc[0].in_lucru - dosareInEvidentaActiva
+    stoc[0].dataValues.dosareInEvidentaPasiva =
+      stoc[0].in_lucru - dosareInEvidentaActiva;
   }
-
 
   res.status(200).json({
     stoc: stoc,
@@ -179,7 +178,7 @@ exports.getStoc = async (req, res, next) => {
 };
 
 exports.addStoc = async (req, res, next) => {
-  let dosareInEvidentaActiva = 0
+  let dosareInEvidentaActiva = 0;
 
   try {
     const stoc = await Stoc.create({
@@ -187,8 +186,6 @@ exports.addStoc = async (req, res, next) => {
       inregistrate_an_curent: req.body.inregistrate_an_curent,
       solutionate_an_curent: req.body.solutionate_an_curent,
     });
-
-
 
     res.status(200).json({
       stoc: stoc,
@@ -216,10 +213,11 @@ exports.getIncarcatura = async (req, res, next) => {
     queryObject.procurorId = req.userId;
   }
 
-
-
   try {
-    const incarcatura = await Incarcatura.findAll({ where: queryObject, order: ['number_dos_cu_ac'] });
+    const incarcatura = await Incarcatura.findAll({
+      where: queryObject,
+      order: ["number_dos_cu_ac"],
+    });
 
     let incarcaturaToSend = await Promise.all(
       incarcatura.map(async (itemData) => {
@@ -238,8 +236,6 @@ exports.getIncarcatura = async (req, res, next) => {
       })
     );
 
-
-
     res.status(200).json({ incarcatura: incarcaturaToSend });
   } catch (err) {
     next(err);
@@ -250,36 +246,61 @@ exports.addIncarcatura = async (req, res, next) => {
   let queryObject = { institutia_curenta: { [op.ne]: null } };
   queryObject.numar = req.body.numar_dosar;
 
-  try {
-    let incarcatura = await Incarcatura.findOne({where: {id_procuror: req.body.id_procuror}})
+  let queryObjectIntrate = { institutia_curenta: null };
+  queryObjectIntrate.isArest = "0";
+  queryObjectIntrate.isControlJudiciar = "0";
+  queryObjectIntrate.isArest = "0";
+  queryObjectIntrate.tip_solutie_propusa = "UPP";
+  queryObject.isSechestru = "0";
+  queryObjectIntrate.termen_contestatie = null;
+  queryObjectIntrate.numar = req.body.numar_dosar;
 
-    let dosareCuAc = await Dosar.findAll({where: queryObject})
+  try {
+    let incarcatura = await Incarcatura.findOne({
+      where: { id_procuror: req.body.id_procuror },
+    });
+
+    if(id_procuror=127) {}
+
+    let dosareCuAc = await Dosar.findAll({ where: queryObject });
+    let dosareIntrate = await Dosar.findAll({ where: queryObjectIntrate });
 
     let addUpp = 0;
 
-    if (req.body.invest_proprie === "True") {
+    if (
+      req.body.invest_proprie === "True" &&
+      dosareCuAc &&
+      dosareCuAc.length == 0
+    ) {
       //UPP
+      console.log("upp 1")
       addUpp = 1;
     }
 
+    if (req.body.invest_proprie === "True" && dosareIntrate && dosareIntrate.length == 0) {
+      //UPP
+      console.log("upp 1");
+      addUpp = 1;
+    } else {
+      addUpp = 0;
+    }
 
-    if(!incarcatura && dosareCuAc && dosareCuAc.length ==0) {
-      
+    if (!incarcatura) {
       incarcatura = await Incarcatura.create({
         id_procuror: req.body.id_procuror,
         number_dos_cu_ac: 0,
         number_dos_cu_an: 1,
-        upp: addUpp
+        upp: addUpp,
       });
 
-      console.log(incarcatura)
-    }else if(dosareCuAc && dosareCuAc.length ==0){
-  
+      
+    } else if (dosareCuAc && dosareCuAc.length == 0) {
+      
+
       incarcatura.number_dos_cu_an = +incarcatura.number_dos_cu_an + 1;
       incarcatura.upp = +incarcatura.upp + addUpp;
       await incarcatura.save();
     }
-
 
     res.status(200).json({
       incarcatura: incarcatura,
