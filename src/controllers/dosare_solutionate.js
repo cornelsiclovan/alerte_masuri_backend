@@ -286,7 +286,7 @@ exports.addIncarcatura = async (req, res, next) => {
       addUpp = 0;
     }
 
-    if (!incarcatura) {
+    if (!incarcatura && dosareCuAc && dosareCuAc.length == 0) {
       incarcatura = await Incarcatura.create({
         id_procuror: req.body.id_procuror,
         number_dos_cu_ac: 0,

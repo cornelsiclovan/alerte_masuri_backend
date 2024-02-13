@@ -286,18 +286,24 @@ exports.getDosarById = async (req, res, next) => {
   let dosar;
   let parte;
   let fapta;
-
+  let numeProcuror;
   let pedeapsa;
 
   const dosarId = req.params.dosarId;
 
   try {
+    
     dosar = await Dosar.findAll({ where: { id: dosarId } });
     if (dosar) {
       parte = await Part.findAll({ where: { numar_dosar: dosar[0].numar } });
       fapta = await Doing.findAll({
         where: { numar_dosar: dosar[0].numar },
       });
+      const proc = await User.findOne({where: {id: dosar[0].procurorId}})
+      if(proc){
+        numeProcuror = proc.name;
+        console.log(proc.name)
+      }
     }
 
     if (!dosar) {
@@ -366,10 +372,12 @@ exports.getDosarById = async (req, res, next) => {
       });
       dosar[0].dataValues.infractiuneParinte = parinte_infractiune[0];
     }
+    console.log("here");
 
     dosar[0].dataValues.parte = parte;
     dosar[0].dataValues.fapta = fapta;
     dosar[0].dataValues.infractiune = infractiune;
+    dosar[0].dataValues.numeProcuror = numeProcuror;
 
     res.status(200).json({ dosar: dosar[0] });
   } catch (err) {
