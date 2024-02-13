@@ -25,7 +25,17 @@ exports.getPArtByDosarNumber = async (req, res, next) => {
 
 
 exports.postPart = async (req, res, next) => {
-
+  let calitate_parte = '';
+  if(req.body.id_tipcalitateparte === "1015") {
+    calitate_parte = "faptuitor";
+  }
+  if(req.body.id_tipcalitateparte === "1002") {
+    calitate_parte = "suspect";
+  }
+  if(req.body.id_tipcalitateparte === "1") {
+    calitate_parte = "inculpat";
+  }
+  
 
   try {
     const part = await Part.create({
@@ -56,7 +66,8 @@ exports.postPart = async (req, res, next) => {
       studii: req.body.studii,
       ocupatie: req.body.ocupatie,
       judet_nastere: req.body.judet_nastere,
-      minor: req.body.minor
+      minor: req.body.minor,
+      calitate: calitate_parte
     });
 
 

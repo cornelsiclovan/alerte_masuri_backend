@@ -122,6 +122,10 @@ const Part = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
+    calitate: {
+      type: Sequelize.STRING,
+      allowNull: true
+    }
   },
   {
     charset: "utf8",
