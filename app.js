@@ -14,6 +14,9 @@ const Stoc = require("./src/models/stoc");
 const Incarcatura = require("./src/models/incarcatura");
 const Upp = require("./src/models/upp");
 
+const partsAc = require("./src/models/partAc");
+const doingAc = require("./src/models/fapteAc");
+
 const authRoutes = require("./src/routes/auth");
 const dosRoutes = require("./src/routes/dosare");
 const userRoutes = require("./src/routes/user");

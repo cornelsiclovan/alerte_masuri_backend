@@ -85,7 +85,7 @@ exports.genereaza = async (req, res, next) => {
 
     let textParteVatamata_chelt = "persoana vătămată " + parte_vatamata;
 
-    if (parte_vatamata.includes(", ")) {
+    if (parte_vatamata && parte_vatamata.includes(", ")) {
       textParteVatamata = "persoanelor vătămate " + parte_vatamata;
       textParteVatamata_chelt = "pesoanele vătămate " + parte_vatamata;
     }
@@ -106,7 +106,7 @@ exports.genereaza = async (req, res, next) => {
       alin_3 = "În  temeiul  art. 275  alin. (5) rap.  la art.  275 alin. (1) pct. 2 lit. d C. proc. pen., cheltuielile judiciare în cuantum de 50 de lei vor fi suportate de către " + textParteVatamata_chelt  + " – 25 lei și numitul " + req.body.autorul_faptei + " - 25 lei.";
     }
 
-    if (!req.body.autorul_faptei.includes("NECUNOSCUT")) {
+    if (req.body.autorul_faptei && !req.body.autorul_faptei.includes("NECUNOSCUT")) {
       if (
         req.body.autorul_faptei !== null &&
         !req.body.autorul_faptei.includes(",")

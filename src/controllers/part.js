@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 const Part = require("../models/part");
 const Doing = require("../models/fapte");
+const PartAc = require("../models/partAc");
 
 const op = Sequelize.Op;
 
@@ -82,10 +83,53 @@ exports.postPart = async (req, res, next) => {
   }
 };
 
+exports.postPartAc = async (req, res, next) => {
+  console.log(req.body)
+  let calitate_parte = '';
+  if(req.body.id_tipcalitateparte === "1015") {
+    calitate_parte = "faptuitor";
+  }
+  if(req.body.id_tipcalitateparte === "1002") {
+    calitate_parte = "suspect";
+  }
+  if(req.body.id_tipcalitateparte === "1") {
+    calitate_parte = "inculpat";
+  }
+  
+
+  try {
+    const part = await PartAc.create({
+      numar_dosar: req.body.numar_dosar,
+      nume: req.body.nume,
+      ordine: req.body.ordine,
+      cnp: req.body.cnp,
+      calitate: calitate_parte
+    });
+
+
+    res.status(200).json({
+      part: part,
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 404;
+    }
+    next(err);
+  }
+};
+
 exports.cleanParts = async (req, res, next) => {
   await Part.destroy({ where: {} });
 
   res.status(200).json({
     message: "clean parts",
+  });
+};
+
+exports.cleanPartsAc = async (req, res, next) => {
+  await PartAc.destroy({ where: {} });
+
+  res.status(200).json({
+    message: "clean parts ac",
   });
 };
