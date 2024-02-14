@@ -251,6 +251,7 @@ exports.genereaza = async (req, res, next) => {
             new TextRun({
               text: `${nume_procuror}`,
               font: "Times New Roman",
+              bold: true,
               size: 24,
             }),
           ],
