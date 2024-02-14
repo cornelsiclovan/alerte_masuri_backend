@@ -9,6 +9,8 @@ const Pedepse = require("../models/pedepse");
 const Infractiuni = require("../models/infractiuni");
 const Incarcatura = require("../models/incarcatura");
 const Upp = require("../models/upp");
+const PartAc = require("../models/partAc");
+const DoingAc = require("../models/fapteAc");
 
 const op = Sequelize.Op;
 
@@ -296,9 +298,25 @@ exports.getDosarById = async (req, res, next) => {
     dosar = await Dosar.findAll({ where: { id: dosarId } });
     if (dosar) {
       parte = await Part.findAll({ where: { numar_dosar: dosar[0].numar } });
+
+      if(parte.length === 0) {
+        parte = await PartAc.findAll({where: {numar_dosar: dosar[0].numar}});
+      }
+
+
+
       fapta = await Doing.findAll({
         where: { numar_dosar: dosar[0].numar },
       });
+
+
+      if(fapta.length === 0) {
+        fapta = await DoingAc.findAll({
+          where: { numar_dosar: dosar[0].numar },
+        });
+      }
+
+
       const proc = await User.findOne({where: {id: dosar[0].procurorId}})
       if(proc){
         numeProcuror = proc.name;
