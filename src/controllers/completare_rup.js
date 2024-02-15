@@ -10,7 +10,7 @@ exports.genereaza = async (req, res, next) => {
   try {
     const nume_procuror = req.body.nume_procuror; // DIN ECRIS
     const numar_dosar = req.body.numar_dosar; // DIN ECRIS
-    const autorul_faptei = req.body.autorul_faptei || "-----------------";
+    const autorul_faptei = req.body.autorul_faptei;
     const situatie = req.body.situatie || "------------------";
     let pedeapsa = req.body.pedeapsa || "-----------------";
 
@@ -54,6 +54,8 @@ exports.genereaza = async (req, res, next) => {
     let templateName = "template/rup/template.docx";
 
     console.log("line 57", autorul_faptei === "AUTOR NECUNOSCUT" || autorul_faptei === "AN" || autorul_faptei === "A.N.", autorul_faptei === "", "a faptei: ", autorul_faptei );
+
+    console.log(autorul_faptei);
 
     if ( autorul_faptei === "AUTOR NECUNOSCUT" || autorul_faptei === "AN" || autorul_faptei === "A.N." || autorul_faptei === "") {
       console.log("here");
