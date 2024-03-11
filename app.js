@@ -29,6 +29,10 @@ const doingRoutes = require("./src/routes/doing");
 const partRoutes = require("./src/routes/part");
 const fileRoutes = require("./src/routes/file");
 const Infractiuni = require("./src/models/infractiuni");
+const participariRoutes = require("./src/routes/participari");
+const Participare = require("./src/models/participari_sedinte");
+const ordineRoutes = require("./src/routes/ordine");
+const Ordine = require("./src/models/ordin");
 
 
 
@@ -37,6 +41,12 @@ dotenv.config();
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use(
+  "/uploads/documents",
+  express.static(path.join("uploads", "documents"))
+);
+
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -63,6 +73,8 @@ app.use("/solutionateLunar", solutionateLunarRoutes);
 app.use("/doings", doingRoutes);
 app.use("/parts", partRoutes);
 app.use("/file", fileRoutes);
+app.use("/participari", participariRoutes);
+app.use("/ordine", ordineRoutes);
 
 app.use("/genereaza-documente", genereazaDocumenteRoutes);
 

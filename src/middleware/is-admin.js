@@ -13,7 +13,10 @@ module.exports = async (req, res, next) => {
     }
 
     req.isAdmin = user.isAdmin;
+  
   } catch (err) {
     next(err);
   }
+
+  next();
 };
