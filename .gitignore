@@ -1,3 +1,5 @@
 node_modules
 .env
 src/util/database.js
+uploads
+documente
