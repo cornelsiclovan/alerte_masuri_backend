@@ -21,8 +21,6 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
 
   let procurorId = req.query.procurorId;
 
-
-
   if (procurorId === "1") {
     queryObject.id = req.userId;
   }
@@ -30,7 +28,7 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
   queryObject.isProcuror = 1;
 
   try {
-    procurori = await User.findAll({ where: queryObject});
+    procurori = await User.findAll({ where: queryObject });
 
     let situatie_cu_ac = await Promise.all(
       procurori.map(async (procuror) => {
@@ -42,8 +40,7 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
 
         let countDosCuAcUpp = 0;
 
-        const dosCuAcUpp = await Dosar.findAll({where: queryObject});
-  
+        const dosCuAcUpp = await Dosar.findAll({ where: queryObject });
 
         let queryObjectIntrate = { institutia_curenta: { [op.eq]: null } };
         queryObjectIntrate.isArest = "0";
@@ -53,7 +50,9 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
         queryObjectIntrate.termen_contestatie = null;
         queryObjectIntrate.procurorId = procuror.id;
 
-        const dosIntrateUpp = await Dosar.findAll({where: queryObjectIntrate})
+        const dosIntrateUpp = await Dosar.findAll({
+          where: queryObjectIntrate,
+        });
         let dosareAcUPP = [];
 
         dosCuAcUpp.map(async (dos) => {
@@ -62,52 +61,48 @@ exports.getNrDosareCuAcPeProcuror = async (req, res, next) => {
           countDosCuAcUpp = countDosCuAcUpp + 1;
         });
 
-     
-
-
         dosIntrateUpp.map((dosInt) => {
           let exista = false;
           dosareAcUPP.map((dos) => {
-            if(dosInt.numar === dos.numar) {
+            if (dosInt.numar === dos.numar) {
               exista = true;
-             
             }
           });
-         
-          if(!exista) {
-           
-            countDosCuAcUpp = countDosCuAcUpp + 1
-          } 
-        })
 
-        if(procuror.id === 127) {
-          console.log( procuror.name)
+          if (!exista) {
+            countDosCuAcUpp = countDosCuAcUpp + 1;
+          }
+        });
+
+        if (procuror.id === 127) {
+          console.log(procuror.name);
           console.log(countDosCuAcUpp);
         }
 
-        const countDosCuAn = await Incarcatura.findOne({where: {id_procuror: procuror.id}})
-        const uppObject = await Upp.findOne({where: {id_procuror: procuror.id}});
-      
+        const countDosCuAn = await Incarcatura.findOne({
+          where: { id_procuror: procuror.id },
+        });
+        const uppObject = await Upp.findOne({
+          where: { id_procuror: procuror.id },
+        });
 
-          return {
-            procurorId: procuror.id,
-            numeProcuror: procuror.name,
-            number_dos_cu_an: countDosCuAn ? countDosCuAn.number_dos_cu_an : 0 ,
-            number_dos_cu_ac: countDosCuAc || 0,
-            number_dos_cu_ac_upp: countDosCuAcUpp || 0,
-            upp: uppObject ? uppObject.upp : 0,
-            number_dos_cu_an_upp: countDosCuAn ? countDosCuAn.upp : 0 ,
-          };
-      
-      })  
+        return {
+          procurorId: procuror.id,
+          numeProcuror: procuror.name,
+          number_dos_cu_an: countDosCuAn ? countDosCuAn.number_dos_cu_an : 0,
+          number_dos_cu_ac: countDosCuAc || 0,
+          number_dos_cu_ac_upp: countDosCuAcUpp || 0,
+          upp: uppObject ? uppObject.upp : 0,
+          number_dos_cu_an_upp: countDosCuAn ? countDosCuAn.upp : 0,
+        };
+      })
     );
 
-    situatie_cu_ac = situatie_cu_ac.sort((a,b) => {
-    
-      if(a.number_dos_cu_ac > b.number_dos_cu_ac) {
+    situatie_cu_ac = situatie_cu_ac.sort((a, b) => {
+      if (a.number_dos_cu_ac > b.number_dos_cu_ac) {
         return -1;
-      }else return 1
-    })
+      } else return 1;
+    });
 
     res.status(200).json({ situatie_cu_ac: situatie_cu_ac });
   } catch (err) {
@@ -294,33 +289,30 @@ exports.getDosarById = async (req, res, next) => {
   const dosarId = req.params.dosarId;
 
   try {
-    
     dosar = await Dosar.findAll({ where: { id: dosarId } });
     if (dosar) {
       parte = await Part.findAll({ where: { numar_dosar: dosar[0].numar } });
 
-      if(parte.length === 0) {
-        parte = await PartAc.findAll({where: {numar_dosar: dosar[0].numar}});
+      if (parte.length === 0) {
+        parte = await PartAc.findAll({
+          where: { numar_dosar: dosar[0].numar },
+        });
       }
-
-
 
       fapta = await Doing.findAll({
         where: { numar_dosar: dosar[0].numar },
       });
 
-
-      if(fapta.length === 0) {
+      if (fapta.length === 0) {
         fapta = await DoingAc.findAll({
           where: { numar_dosar: dosar[0].numar },
         });
       }
 
-
-      const proc = await User.findOne({where: {id: dosar[0].procurorId}})
-      if(proc){
+      const proc = await User.findOne({ where: { id: dosar[0].procurorId } });
+      if (proc) {
         numeProcuror = proc.name;
-        console.log(proc.name)
+        console.log(proc.name);
       }
     }
 
@@ -596,6 +588,11 @@ exports.addDosar = async (req, res, next) => {
 
     if (req.body.date_undertaking) {
       data = req.body.date_undertaking;
+
+      if (req.body.date_m && req.body.date_m !== "") {
+        data = req.body.date_m;
+      }
+
       days_remaining = req.body.days_remaining;
 
       let tip_data_cu_punct = false;
