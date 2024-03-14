@@ -601,8 +601,20 @@ exports.addDosar = async (req, res, next) => {
         dataArray = req.body.date_undertaking.split(" ")[0].split("/");
       }
 
+      
+
       if (req.body.date_undertaking.split(" ")[0].includes(".")) {
         dataArray = req.body.date_undertaking.split(" ")[0].split(".");
+
+        tip_data_cu_punct = true;
+      }
+
+      if(req.body.date_m && req.body.date_m !== "" && req.body.date_m.split(" ")[0].includes("/")) {
+        dataArray = req.body.date_m.split(" ")[0].split("/");
+      }
+
+      if(req.body.date_m && req.body.date_m !== "" && req.body.date_m.split(" ")[0].includes(".")) {
+        dataArray = req.body.date_m.split(" ")[0].split(".");
 
         tip_data_cu_punct = true;
       }
