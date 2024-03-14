@@ -20,7 +20,7 @@ exports.getParticipariPenal = async (req, res, next) => {
   }
 
   if (procurorId === "1") {
-    queryObject.procurorId = req.userId;
+    queryObject.id_procuror = req.userId;
   }
 
   queryObject.tip_sedinta = 1;
