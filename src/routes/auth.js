@@ -36,4 +36,9 @@ router.post(
   authController.login
 );
 
+router.post(
+  "/changePassword",
+  authController.changePassword
+)
+
 module.exports = router;

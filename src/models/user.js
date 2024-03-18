@@ -34,6 +34,10 @@ const User = sequelize.define(
       type: Sequelize.BOOLEAN,
       defaultValue: false,
     },
+    initial_login: {
+      type: Sequelize.STRING,
+      defaultValue: 1
+    }
   },
   {
     charset: "utf8",

@@ -98,6 +98,7 @@ exports.login = async (req, res, next) => {
     res.status(200).json({
       token: token,
       userId: user.id,
+      initial_login: user.initial_login,
       isAdmin: user.isAdmin,
       isProcuror: user.isProcuror,
       isGrefier: user.isGrefier,
@@ -109,3 +110,37 @@ exports.login = async (req, res, next) => {
     next(error);
   }
 };
+
+
+exports.changePassword = async (req, res, next) => {
+  const oldPassword = req.body.oldPassword;
+  const email = req.body.email;
+  const newPassword = req.body.newPassword;
+  const newPasswordRepeat = req.body.newPasswordRepeat;
+
+  try {
+
+    if(!email || !oldPassword || !newPassword || !newPasswordRepeat) {
+      const error = new Error("all data must be complete");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    const user = await User.findOne({ where: { email: email, password: oldPassword } });
+
+    if(!user) {
+      const error = new Error("this user does not exist, or password is incorrect");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    user.initial_login = 0;
+    user.password = newPassword;
+    await user.save();
+    res.status(200).json({
+      message: "success!"
+    })
+  } catch(error) {
+    next(error);
+  }
+}
