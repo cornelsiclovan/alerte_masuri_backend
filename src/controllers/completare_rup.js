@@ -239,6 +239,7 @@ exports.genereaza = async (req, res, next) => {
         numar_dosar: req.body.numar_dosar,
         nume: filename,
         tip_document: "RUP",
+        procuror: req.body.nume_procuror
       });
 
       res.status(200).json({ message: "success" });

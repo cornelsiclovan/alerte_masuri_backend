@@ -259,6 +259,7 @@ exports.genereaza = async (req, res, next) => {
         numar_dosar: req.body.numar_dosar,
         nume: filename,
         tip_document: "CLASARE INSUSITA",
+        procuror: req.body.nume_procuror
       });
 
       // const myDocName = docPath + "/" + filename + ".docx";

@@ -22,6 +22,10 @@ const File = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
+    procuror: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
   },
   {
     charset: "utf8",
