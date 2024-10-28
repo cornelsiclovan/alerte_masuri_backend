@@ -13,6 +13,7 @@ const Pedepse = require("./src/models/pedepse");
 const Stoc = require("./src/models/stoc");
 const Incarcatura = require("./src/models/incarcatura");
 const Upp = require("./src/models/upp");
+const Arestat = require("./src/models/arestati");
 
 const partsAc = require("./src/models/partAc");
 const doingAc = require("./src/models/fapteAc");
@@ -33,6 +34,7 @@ const participariRoutes = require("./src/routes/participari");
 const Participare = require("./src/models/participari_sedinte");
 const ordineRoutes = require("./src/routes/ordine");
 const Ordine = require("./src/models/ordin");
+const arestatiRoutes = require("./src/routes/arestati");
 
 
 
@@ -75,6 +77,7 @@ app.use("/parts", partRoutes);
 app.use("/file", fileRoutes);
 app.use("/participari", participariRoutes);
 app.use("/ordine", ordineRoutes);
+app.use("/arestati", arestatiRoutes);
 
 app.use("/genereaza-documente", genereazaDocumenteRoutes);
 
