@@ -13,7 +13,7 @@ exports.genereaza = async (req, res, next) => {
         const nume_procuror = req.body.nume_procuror; // DIN ECRIS
         const numar_dosar = req.body.numar_dosar; // DIN ECRIS
         let autorul_faptei = req.body.autorul_faptei || "-----------------";
-        let infractiune = req.body.fapta || "";
+        let infractiune = req.body.infractiune || "";
         let tip_adresa = req.body.tip_adresa;
         let parte_vatamata = req.body.parte_vatamata;
 

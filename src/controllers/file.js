@@ -23,6 +23,10 @@ exports.getFileByDosarName = async (req, res, next) => {
     const tip_solutie = fileNames[0].tip_document;
     let directorsolutie = "/clasari-insusite/"
 
+    if(tip_solutie.includes("ADRESA")) {
+      directorsolutie = "/adrese/"
+    }
+
     if(tip_solutie.includes("RUP")) {
       directorsolutie = "/rup/"
     }
