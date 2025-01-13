@@ -14,6 +14,8 @@ const Stoc = require("./src/models/stoc");
 const Incarcatura = require("./src/models/incarcatura");
 const Upp = require("./src/models/upp");
 const Arestat = require("./src/models/arestati");
+const Alineat = require("./src/models/alineat");
+const Litera = require("./src/models/litera");
 
 const partsAc = require("./src/models/partAc");
 const doingAc = require("./src/models/fapteAc");
@@ -35,6 +37,8 @@ const Participare = require("./src/models/participari_sedinte");
 const ordineRoutes = require("./src/routes/ordine");
 const Ordine = require("./src/models/ordin");
 const arestatiRoutes = require("./src/routes/arestati");
+const litereRoutes = require("./src/routes/litera");
+const alineateRoutes = require("./src/routes/alineat")
 
 
 
@@ -78,6 +82,8 @@ app.use("/file", fileRoutes);
 app.use("/participari", participariRoutes);
 app.use("/ordine", ordineRoutes);
 app.use("/arestati", arestatiRoutes);
+app.use("/alineate", alineateRoutes);
+app.use("/litere", litereRoutes);
 
 app.use("/genereaza-documente", genereazaDocumenteRoutes);
 
@@ -103,15 +109,15 @@ Dosar.belongsTo(User, { constraints: true, onDelete: "RESTRICT" });
 User.hasMany(Dosar);
 
 // Pedepse.belongsTo(Infractiuni, { constraints: true, onDelete: "RESTRICT" });
-// Infractiuni.hasMany(Pedepse);
-
+// Infractiuni.hasMany(Pedepse);   
+  
 // End Relations
 
 try {
   //sequelize.sync({force: true});
   sequelize.sync();
-} catch (error) {
+} catch (error) {    
   console.log(error);
-}
+}  
 
 app.listen(8080);
