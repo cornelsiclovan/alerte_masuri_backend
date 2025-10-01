@@ -25,11 +25,13 @@ exports.getIndrumators = async (req, res, next) => {
         let dosareFinale = [];
 
         for (const dos of dosarecuIndrumator) {
-            if (dos !== null) {
-                let dos2 = await Dosar.findOne({ where: queryObject })
-                dosareFinale.push(dos2)
-            }
+        
+            queryObject.id_dosar = dos.id_dosar
 
+            let dos2 = await Dosar.findOne({ where: queryObject })
+            if(dos2 && dos2!==null) {
+                 dosareFinale.push(dos2)
+            } 
         }
 
         // dosare = await Dosar.findAll({ where: queryObject });
@@ -44,7 +46,7 @@ exports.getIndrumators = async (req, res, next) => {
             let indrumator = await Indrumator.findOne({ where: { id_dosar: dosar.id_dosar } });
             let procuror = await User.findOne({ where: { id: dosar.procurorId } });
 
-
+            
 
             if (indrumator) {
 
@@ -151,8 +153,8 @@ exports.createIndrumator = async (req, res, next) => {
                 });
 
             }
-            res.send(indrumator);
-        } else { res.send("cannot set indrumator to other user") }
+             res.send(indrumator);
+        } else {res.send("cannot set indrumator to other user")}
 
         // taskids.forEach(async taskid => {
         //     let indrumatorTask = await IndrumatorTask.create({
@@ -165,7 +167,7 @@ exports.createIndrumator = async (req, res, next) => {
 
 
 
-
+       
     } catch (error) {
         res.send(error);
     }
