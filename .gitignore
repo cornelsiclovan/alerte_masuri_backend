@@ -1,6 +1,11 @@
 node_modules
 .env
 src/util/database.js
-uploads
-documente
+uploads/documents/*
+documente/adrese/*
+documente/clasari-insusite/*
+documente/clasari-motivate/*
+documente/indrumari/*
+documente/rechizitorii/*
+documente/rup/*
 template

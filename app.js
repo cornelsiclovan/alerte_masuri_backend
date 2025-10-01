@@ -16,6 +16,9 @@ const Upp = require("./src/models/upp");
 const Arestat = require("./src/models/arestati");
 const Alineat = require("./src/models/alineat");
 const Litera = require("./src/models/litera");
+const Task = require("./src/models/task");
+const IndrumatorTask = require("./src/models/indrumator_task");
+const Indrumator = require("./src/models/indrumator");
 
 const partsAc = require("./src/models/partAc");
 const doingAc = require("./src/models/fapteAc");
@@ -39,7 +42,10 @@ const Ordine = require("./src/models/ordin");
 const arestatiRoutes = require("./src/routes/arestati");
 const litereRoutes = require("./src/routes/litera");
 const alineateRoutes = require("./src/routes/alineat")
-
+const indrumatorRoutes = require("./src/routes/indrumator");
+const taskRoutes = require("./src/routes/task");
+const taskTypeRoutes = require("./src/routes/task_type");
+const TaskType = require("./src/models/task_type");
 
 
 
@@ -84,6 +90,10 @@ app.use("/ordine", ordineRoutes);
 app.use("/arestati", arestatiRoutes);
 app.use("/alineate", alineateRoutes);
 app.use("/litere", litereRoutes);
+app.use("/indrumator", indrumatorRoutes);
+app.use("/task", taskRoutes);
+app.use("/type", taskTypeRoutes);
+
 
 app.use("/genereaza-documente", genereazaDocumenteRoutes);
 
@@ -115,9 +125,10 @@ User.hasMany(Dosar);
 
 try {
   //sequelize.sync({force: true});
-  sequelize.sync();
+  sequelize.sync(); 
+  
 } catch (error) {    
   console.log(error);
 }  
 
-app.listen(8080);
+app.listen(process.env.BACKEND_PORT);
