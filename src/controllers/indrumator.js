@@ -21,21 +21,32 @@ exports.getIndrumators = async (req, res, next) => {
     }
 
     try {
-        dosare = await Dosar.findAll({ where: queryObject });
+        let dosarecuIndrumator = await Indrumator.findAll();
+        let dosareFinale = [];
+
+        for (const dos of dosarecuIndrumator) {
+            queryObject.id_dosar = dos.id_dosar
+            dosareFinale.push(await Dosar.findOne({ where: queryObject }))
+        }
+
+        // dosare = await Dosar.findAll({ where: queryObject });
+        // console.log(dosareFinale)
+
+
 
         const testIndrumatoare = [];
 
-        for (const dosar of dosare) {
+        for (const dosar of dosareFinale) {
             let indrumator = await Indrumator.findOne({ where: { id_dosar: dosar.id_dosar } });
-            let procuror = await User.findOne({where: {id: dosar.procurorId}});
+            let procuror = await User.findOne({ where: { id: dosar.procurorId } });
 
-            
+
             if (indrumator) {
 
                 temp = indrumator;
                 tasks = await IndrumatorTask.findAll({ where: { id_indrumator: indrumator.id } })
 
-                testIndrumatoare.push ({
+                testIndrumatoare.push({
                     id_indrumator: temp.id,
                     dosar: dosar.numar,
                     dosar_id: dosar.id,
@@ -158,12 +169,22 @@ exports.editIndrumator = async (req, res, next) => {
     try {
         let task = await IndrumatorTask.findOne({ where: { id: id_task } });
 
-        if (task) {
 
-            task.status = status;
-            await task.save();
+        let indrumator = await Indrumator.findOne({ where: { id: task.id_indrumator } });
+        let dosar = await Dosar.findOne({ where: { id_dosar: indrumator.id_dosar } });
+        let procuror = await User.findOne({ where: { id: dosar.procurorId } });
+
+        if (req.userId === procuror.id) {
+
+            if (task) {
+
+                task.status = status;
+                await task.save();
+            }
+            res.send("success");
+        }else {
+            res.send("user is not owner")
         }
-        res.send("success");
 
     } catch (error) {
         res.send(error);
@@ -175,6 +196,12 @@ exports.setTaskToIndrumator = async (req, res, next) => {
     let nota = req.body.nota;
     let taskId = req.body.id_task;
     let status = req.body.status || 0
+
+    let indrumator = await Indrumator.findOne({ where: { id: indrumatorId } });
+    let dosar = await Dosar.findOne({ where: { id_dosar: indrumator.id_dosar } });
+    let procuror = await User.findOne({ where: { id: dosar.procurorId } });
+
+
     try {
         let task = await Task.findOne({ where: { id: taskId } });
         let task_type = await TaskType.findOne({ where: { id: task.type_id } })
@@ -184,17 +211,32 @@ exports.setTaskToIndrumator = async (req, res, next) => {
             task_type_nume = ""
         }
 
+        console.log(procuror.id, req.userId)
 
-        let indrumatorTask = await IndrumatorTask.create({
-            id_indrumator: indrumatorId,
-            nota: nota,
-            id_task: taskId,
-            task_type: task_type_nume,
-            task_name: task.nume,
-            status: status
-        })
+        if (req.userId === procuror.id) {
+            let indrumatorTask = await IndrumatorTask.create({
+                id_indrumator: indrumatorId,
+                nota: nota,
+                id_task: taskId,
+                task_type: task_type_nume,
+                task_name: task.nume,
+                status: status
+            })
+            res.send(indrumatorTask);
+        } else {
+            res.send("user cannot set indrumator");
+        }
 
-        res.send(indrumatorTask);
+        // let indrumatorTask = await IndrumatorTask.create({
+        //     id_indrumator: indrumatorId,
+        //     nota: nota,
+        //     id_task: taskId,
+        //     task_type: task_type_nume,
+        //     task_name: task.nume,
+        //     status: status
+        // })
+
+
     } catch (error) {
         res.send(error)
     }
