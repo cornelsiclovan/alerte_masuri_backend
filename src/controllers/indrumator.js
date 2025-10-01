@@ -25,20 +25,25 @@ exports.getIndrumators = async (req, res, next) => {
         let dosareFinale = [];
 
         for (const dos of dosarecuIndrumator) {
-            queryObject.id_dosar = dos.id_dosar
-            dosareFinale.push(await Dosar.findOne({ where: queryObject }))
+            if (dos !== null) {
+                let dos2 = await Dosar.findOne({ where: queryObject })
+                dosareFinale.push(dos2)
+            }
+
         }
 
         // dosare = await Dosar.findAll({ where: queryObject });
         // console.log(dosareFinale)
 
 
-
+        //console.log(dosareFinale)
         const testIndrumatoare = [];
 
         for (const dosar of dosareFinale) {
+            //console.log(dosar)
             let indrumator = await Indrumator.findOne({ where: { id_dosar: dosar.id_dosar } });
             let procuror = await User.findOne({ where: { id: dosar.procurorId } });
+
 
 
             if (indrumator) {
@@ -132,18 +137,22 @@ exports.createIndrumator = async (req, res, next) => {
     try {
         let indrumator = await Indrumator.findOne({ where: { id_dosar: id_dosar } });
 
-        if (indrumator) {
-            indrumator.termen = termen;
-            await indrumator.save();
-        } else {
-            indrumator = await Indrumator.create({
-                id_dosar,
-                termen
-            });
+        let dosar = await Dosar.findOne({ where: { id_dosar: id_dosar } });
+        let procuror = await User.findOne({ where: { id: dosar.procurorId } });
 
-        }
+        if (procuror.id === req.userId) {
+            if (indrumator) {
+                indrumator.termen = termen;
+                await indrumator.save();
+            } else {
+                indrumator = await Indrumator.create({
+                    id_dosar,
+                    termen
+                });
 
-
+            }
+            res.send(indrumator);
+        } else { res.send("cannot set indrumator to other user") }
 
         // taskids.forEach(async taskid => {
         //     let indrumatorTask = await IndrumatorTask.create({
@@ -156,7 +165,7 @@ exports.createIndrumator = async (req, res, next) => {
 
 
 
-        res.send(indrumator);
+
     } catch (error) {
         res.send(error);
     }
@@ -182,7 +191,7 @@ exports.editIndrumator = async (req, res, next) => {
                 await task.save();
             }
             res.send("success");
-        }else {
+        } else {
             res.send("user is not owner")
         }
 
