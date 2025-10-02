@@ -15,6 +15,10 @@ const Indrumator = sequelize.define("indrumator", {
     termen: {
         type: Sequelize.DATEONLY,
         allowNull: false
+    },
+    finalizata: {
+        type: Sequelize.INTEGER,
+        allowNull: true
     }
 })
 

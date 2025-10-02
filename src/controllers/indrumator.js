@@ -25,13 +25,13 @@ exports.getIndrumators = async (req, res, next) => {
         let dosareFinale = [];
 
         for (const dos of dosarecuIndrumator) {
-        
+
             queryObject.id_dosar = dos.id_dosar
 
             let dos2 = await Dosar.findOne({ where: queryObject })
-            if(dos2 && dos2!==null) {
-                 dosareFinale.push(dos2)
-            } 
+            if (dos2 && dos2 !== null) {
+                dosareFinale.push(dos2)
+            }
         }
 
         // dosare = await Dosar.findAll({ where: queryObject });
@@ -43,10 +43,10 @@ exports.getIndrumators = async (req, res, next) => {
 
         for (const dosar of dosareFinale) {
             //console.log(dosar)
-            let indrumator = await Indrumator.findOne({ where: { id_dosar: dosar.id_dosar } });
+            let indrumator = await Indrumator.findOne({ where: { id_dosar: dosar.id_dosar, finalizata: 0 } });
             let procuror = await User.findOne({ where: { id: dosar.procurorId } });
 
-            
+
 
             if (indrumator) {
 
@@ -107,22 +107,26 @@ exports.getIndrumators = async (req, res, next) => {
 exports.getIndrumatorByDosarId = async (req, res, next) => {
     let id_dosar = req.params.id_dosar;
 
+
     try {
-        let indrumator = await Indrumator.findOne({ where: { id_dosar: id_dosar } })
-        let indrumator_tasks = await IndrumatorTask.findAll({ where: { id_indrumator: indrumator.id } })
-
-        let indrumatorToSend = {
-            id: indrumator.id,
-            termen: indrumator.termen,
-            tasks: indrumator_tasks
-        }
-
+        let indrumator = await Indrumator.findOne({ where: { id_dosar: id_dosar, finalizata: 0 } })
         if (indrumator) {
-            res.send(indrumatorToSend);
-        } else {
-            res.send({ message: "error" })
-        }
+            let indrumator_tasks = await IndrumatorTask.findAll({ where: { id_indrumator: indrumator.id } })
 
+            let indrumatorToSend = {
+                id: indrumator.id,
+                termen: indrumator.termen,
+                tasks: indrumator_tasks
+            }
+
+            if (indrumator) {
+                res.send(indrumatorToSend);
+            } else {
+
+            }
+        } else {
+            res.send({})
+        }
     } catch (error) {
         res.send(error);
     }
@@ -137,7 +141,8 @@ exports.createIndrumator = async (req, res, next) => {
     const status = req.body.status || 0;
 
     try {
-        let indrumator = await Indrumator.findOne({ where: { id_dosar: id_dosar } });
+
+        let indrumator = await Indrumator.findOne({ where: { id_dosar: id_dosar, finalizata: 0 } });
 
         let dosar = await Dosar.findOne({ where: { id_dosar: id_dosar } });
         let procuror = await User.findOne({ where: { id: dosar.procurorId } });
@@ -149,12 +154,13 @@ exports.createIndrumator = async (req, res, next) => {
             } else {
                 indrumator = await Indrumator.create({
                     id_dosar,
-                    termen
+                    termen,
+                    finalizata: 0
                 });
 
             }
-             res.send(indrumator);
-        } else {res.send("cannot set indrumator to other user")}
+            res.send(indrumator);
+        } else { res.send("cannot set indrumator to other user") }
 
         // taskids.forEach(async taskid => {
         //     let indrumatorTask = await IndrumatorTask.create({
@@ -167,9 +173,72 @@ exports.createIndrumator = async (req, res, next) => {
 
 
 
-       
+
     } catch (error) {
         res.send(error);
+    }
+}
+
+exports.finalizeazaNota = async (req, res, next) => {
+    const id_indrumator = req.params.id_indrumator;
+
+
+    try {
+        let indrumator = await Indrumator.findOne({ where: { id: id_indrumator } });
+        let dosar = await Dosar.findOne({ where: { id_dosar: indrumator.id_dosar } });
+        let procuror = await User.findOne({ where: { id: dosar.procurorId } });
+
+        if (req.userId === procuror.id) {
+
+            if (indrumator) {
+
+                indrumator.finalizata = 1;
+                await indrumator.save();
+            }
+
+            let indrumators = await Indrumator.findAll({ where: { id_dosar: indrumator.id_dosar, finalizata: 1 } });
+            res.send(indrumators);
+        } else {
+            res.send("user is not owner")
+        }
+    } catch (error) {
+        res.send(error)
+    }
+}
+
+exports.revinoLaNotaFinalizata = async (req, res, next) => {
+    const id_indrumator = req.params.id;
+
+    try {
+        let indrumator = await Indrumator.findOne({ where: { id: id_indrumator } });
+        let dosar = await Dosar.findOne({ where: { id_dosar: indrumator.id_dosar } });
+        let procuror = await User.findOne({ where: { id: dosar.procurorId } });
+
+        console.log(indrumator.id);
+
+        if (req.userId === procuror.id) {
+
+            
+            let indrumatorNefinalizat = await Indrumator.findOne({ where: { id_dosar: indrumator.id_dosar, finalizata: 0 } })
+           
+            if (indrumatorNefinalizat) {
+                 console.log(indrumatorNefinalizat.id)
+                indrumatorNefinalizat.finalizata = 1;
+                await indrumatorNefinalizat.save();
+            }
+
+
+            if (indrumator) {
+
+                indrumator.finalizata = 0;
+                await indrumator.save();
+            }
+            res.send(indrumator);
+        } else {
+            res.send("user is not owner")
+        }
+    } catch (error) {
+        res.send(error)
     }
 }
 
@@ -208,12 +277,17 @@ exports.setTaskToIndrumator = async (req, res, next) => {
     let taskId = req.body.id_task;
     let status = req.body.status || 0
 
-    let indrumator = await Indrumator.findOne({ where: { id: indrumatorId } });
-    let dosar = await Dosar.findOne({ where: { id_dosar: indrumator.id_dosar } });
-    let procuror = await User.findOne({ where: { id: dosar.procurorId } });
+
+
 
 
     try {
+
+        let indrumator = await Indrumator.findOne({ where: { id: indrumatorId } });
+        if (indrumator) {
+            let dosar = await Dosar.findOne({ where: { id_dosar: indrumator.id_dosar } });
+            procuror = await User.findOne({ where: { id: dosar.procurorId } });
+        }
         let task = await Task.findOne({ where: { id: taskId } });
         let task_type = await TaskType.findOne({ where: { id: task.type_id } })
 
@@ -224,16 +298,20 @@ exports.setTaskToIndrumator = async (req, res, next) => {
 
         console.log(procuror.id, req.userId)
 
-        if (req.userId === procuror.id) {
-            let indrumatorTask = await IndrumatorTask.create({
-                id_indrumator: indrumatorId,
-                nota: nota,
-                id_task: taskId,
-                task_type: task_type_nume,
-                task_name: task.nume,
-                status: status
-            })
-            res.send(indrumatorTask);
+        if (procuror) {
+            if (req.userId === procuror.id) {
+                let indrumatorTask = await IndrumatorTask.create({
+                    id_indrumator: indrumatorId,
+                    nota: nota,
+                    id_task: taskId,
+                    task_type: task_type_nume,
+                    task_name: task.nume,
+                    status: status
+                })
+                res.send(indrumatorTask);
+            }
+
+
         } else {
             res.send("user cannot set indrumator");
         }
@@ -286,4 +364,17 @@ exports.deleteIndrumatorTask = async (req, res, next) => {
     } catch (error) {
         res.send(error);
     }
+}
+
+exports.getIndrumatorsByDosarId = async (req, res, next) => {
+    let indrumators = [];
+
+    try {
+        indrumators = await Indrumator.findAll({ where: { id_dosar: req.params.id, finalizata: 1 } });
+
+        res.send(indrumators)
+    } catch (error) {
+        res.send(error)
+    }
+    console.log(req.params.id);
 }
