@@ -6,6 +6,7 @@ const router = express.Router();
 
 
 router.get("/", isAuth, indrumatorController.getIndrumators);
+router.get("/finalizate", isAuth, indrumatorController.getIndrumatorsFinalizat);
 router.get("/:id_dosar", isAuth, indrumatorController.getIndrumatorByDosarId);
 router.post("/", isAuth, indrumatorController.createIndrumator);
 router.put("/:taskId", isAuth, indrumatorController.editIndrumator);

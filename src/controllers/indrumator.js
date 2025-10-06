@@ -53,15 +53,117 @@ exports.getIndrumators = async (req, res, next) => {
                 temp = indrumator;
                 tasks = await IndrumatorTask.findAll({ where: { id_indrumator: indrumator.id } })
 
-                testIndrumatoare.push({
-                    id_indrumator: temp.id,
-                    dosar: dosar.numar,
-                    dosar_id: dosar.id,
-                    procuror: procuror.name,
-                    tasks: tasks,
-                    termen: temp.termen,
-                    id_procuror: dosar.procurorId
-                })
+                if (tasks && tasks.length > 0) {
+                    testIndrumatoare.push({
+                        id_indrumator: temp.id,
+                        dosar: dosar.numar,
+                        dosar_id: dosar.id,
+                        procuror: procuror.name,
+                        tasks: tasks,
+                        termen: temp.termen,
+                        id_procuror: dosar.procurorId
+                    })
+                }
+
+
+            }
+        }
+
+
+        let indrumatoareToSend = testIndrumatoare.filter(indrumator => {
+
+            return indrumator !== undefined
+        })
+
+        let newToSend = [];
+
+        indrumatoareToSend.reduce((acc, curr) => {
+            if (acc.indexOf(curr.id_indrumator) === -1) {
+                acc.push(curr.id_indrumator);
+                newToSend.push(curr);
+            }
+            return acc
+        }, [])
+
+        // indrumatoare = await Indrumator.findAll();
+        // let indrumatoareToSend = await Promise.all(
+        //     indrumatoare.map(async indrumator => {
+        //         tasks = await IndrumatorTask.findAll({ where: { id_indrumator: indrumator.id } })
+        //         return {
+        //             id: indrumator.id,
+        //             tasks: tasks
+        //         }
+        //     })
+        // );
+
+
+        let sorted = newToSend.sort((a, b) =>
+            new Date(a.termen) - new Date(b.termen)
+        )
+
+        res.send(sorted);
+    } catch (error) {
+        res.send(error);
+    }
+}
+
+exports.getIndrumatorsFinalizat = async (req, res, next) => {
+    let queryObject = {};
+    let dosare;
+    let indrumatoare;
+    let tasks;
+
+
+    let procurorId = req.query.procurorId;
+    if (procurorId === "1") {
+        queryObject.procurorId = req.userId;
+    }
+
+    try {
+        let dosarecuIndrumator = await Indrumator.findAll();
+        let dosareFinale = [];
+
+        for (const dos of dosarecuIndrumator) {
+
+            queryObject.id_dosar = dos.id_dosar
+
+            let dos2 = await Dosar.findOne({ where: queryObject })
+            if (dos2 && dos2 !== null) {
+                dosareFinale.push(dos2)
+            }
+        }
+
+        // dosare = await Dosar.findAll({ where: queryObject });
+        // console.log(dosareFinale)
+
+
+        //console.log(dosareFinale)
+        const testIndrumatoare = [];
+
+        for (const dosar of dosareFinale) {
+            //console.log(dosar)
+            let indrumator = await Indrumator.findOne({ where: { id_dosar: dosar.id_dosar, finalizata: 1 } });
+            let procuror = await User.findOne({ where: { id: dosar.procurorId } });
+
+
+
+            if (indrumator) {
+
+                temp = indrumator;
+                tasks = await IndrumatorTask.findAll({ where: { id_indrumator: indrumator.id } })
+
+                if (tasks && tasks.length > 0) {
+
+                    testIndrumatoare.push({
+                        id_indrumator: temp.id,
+                        dosar: dosar.numar,
+                        dosar_id: dosar.id,
+                        procuror: procuror.name,
+                        tasks: tasks,
+                        termen: temp.termen,
+                        id_procuror: dosar.procurorId
+                    })
+                }
             }
         }
 
@@ -218,11 +320,11 @@ exports.revinoLaNotaFinalizata = async (req, res, next) => {
 
         if (req.userId === procuror.id) {
 
-            
+
             let indrumatorNefinalizat = await Indrumator.findOne({ where: { id_dosar: indrumator.id_dosar, finalizata: 0 } })
-           
+
             if (indrumatorNefinalizat) {
-                 console.log(indrumatorNefinalizat.id)
+                console.log(indrumatorNefinalizat.id)
                 indrumatorNefinalizat.finalizata = 1;
                 await indrumatorNefinalizat.save();
             }
