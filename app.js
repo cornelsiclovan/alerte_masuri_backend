@@ -19,9 +19,13 @@ const Litera = require("./src/models/litera");
 const Task = require("./src/models/task");
 const IndrumatorTask = require("./src/models/indrumator_task");
 const Indrumator = require("./src/models/indrumator");
+const TaskType = require("./src/models/task_type");
+const Stats = require("./src/models/stat");
+
 
 const partsAc = require("./src/models/partAc");
 const doingAc = require("./src/models/fapteAc");
+
 
 const authRoutes = require("./src/routes/auth");
 const dosRoutes = require("./src/routes/dosare");
@@ -45,7 +49,7 @@ const alineateRoutes = require("./src/routes/alineat")
 const indrumatorRoutes = require("./src/routes/indrumator");
 const taskRoutes = require("./src/routes/task");
 const taskTypeRoutes = require("./src/routes/task_type");
-const TaskType = require("./src/models/task_type");
+const statsRoutes = require('./src/routes/stat');
 
 
 
@@ -93,6 +97,7 @@ app.use("/litere", litereRoutes);
 app.use("/indrumator", indrumatorRoutes);
 app.use("/task", taskRoutes);
 app.use("/type", taskTypeRoutes);
+app.use("/stats", statsRoutes)
 
 
 app.use("/genereaza-documente", genereazaDocumenteRoutes);
