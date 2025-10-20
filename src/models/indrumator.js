@@ -19,7 +19,7 @@ const Indrumator = sequelize.define("indrumator", {
     finalizata: {
         type: Sequelize.INTEGER,
         allowNull: true
-    }
+    },
 })
 
 module.exports = Indrumator;

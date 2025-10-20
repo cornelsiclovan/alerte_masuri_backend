@@ -178,6 +178,74 @@ exports.getDosareCuAc = async (req, res, next) => {
   }
 };
 
+exports.getDosareCuAn = async (req, res, next) => {
+  let dosare = [];
+  let totalItems = 0;
+  let queryObject = { autor_necunoscut: 1 };
+
+  let procurorId = req.query.procurorId;
+  let isAdmin = req.query.isAdmin;
+
+  if (!procurorId && isAdmin !== "1") {
+    queryObject.userId = req.userId;
+  }
+
+  if (procurorId === "1") {
+    queryObject.procurorId = req.userId;
+  }
+
+  try {
+    dosare = await Dosar.findAll({ where: queryObject });
+    totalItems = dosare.length;
+    console.log("ok");
+    let dosareToSend = await Promise.all(
+      dosare.map(async (dosar) => {
+        const procuror = await User.findByPk(dosar.procurorId);
+        let numeProcuror = "null";
+        if (procuror) {
+          numeProcuror = procuror.name;
+        }
+
+        return {
+          id: dosar.id,
+          numar: dosar.numar,
+          numar_fost: dosar.numar_fost,
+          isControlJudiciar: dosar.isControlJudiciar,
+          isArest: dosar.isArest,
+          isSechestru: dosar.isSechestru,
+          data: dosar.data,
+          userId: dosar.userId,
+          data_arest: dosar.data_arest,
+          data_cj: dosar.data_cj,
+          data_sechestru: dosar.data_sechestru,
+          procurorId: dosar.procurorId,
+          este_solutionat: dosar.este_solutionat,
+          numeProcuror: numeProcuror,
+          isInterceptari: dosar.isInterceptari,
+          data_interceptari: dosar.data_interceptari,
+          tip_solutie_propusa: dosar.tip_solutie_propusa,
+          tip_solutie: dosar.tip_solutie,
+          este_solutionat: dosar.este_solutionat,
+          days_remaining: dosar.days_remaining,
+          data_inceperii_la_procuror: dosar.data_inceperii_la_procuror,
+          data_primei_sesizari: dosar.data_primei_sesizari,
+          prima_institutie_sesizata: dosar.prima_institutie_sesizata,
+          institutia_curenta: dosar.institutia_curenta,
+        };
+      })
+    );
+
+    let sortedDosare = dosareToSend.sort(
+      (a, b) => new Date(a.data) - new Date(b.data)
+      // new Date(a.data).getTime() < new Date(b.data).getTime ? 1 : -1
+    );
+
+    res.status(200).json({ dosare: sortedDosare, totalItems: totalItems });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.getDosare = async (req, res, next) => {
   let dosare = [];
   let totalItems = 0;
@@ -188,7 +256,7 @@ exports.getDosare = async (req, res, next) => {
   let isAdmin = req.query.isAdmin;
   let este_solutionat = req.query.este_solutionat;
 
-  let queryObject = { institutia_curenta: null };
+  let queryObject = { institutia_curenta: null, autor_necunoscut: 0 };
 
   if (dosar_name) {
     queryObject.name = dosar_name;
@@ -454,6 +522,16 @@ exports.cleanDataBaseCuAc = async (req, res, next) => {
   });
 };
 
+exports.cleanDataBaseCuAn = async (req, res, next) => {
+  await Dosar.destroy({
+    where: { autor_necunoscut: 1 },
+  });
+
+  res.status(200).json({
+    message: "clean dosare ac",
+  });
+};
+
 exports.cleanDataBaseDosar = async (req, res, next) => {
   await Dosar.destroy({
     where: {
@@ -501,6 +579,7 @@ exports.cleanDataBaseContestatii = async (req, res, next) => {
     message: "clean contestatii",
   });
 };
+
 
 exports.addDosar = async (req, res, next) => {
   const errors = validationResult(req);

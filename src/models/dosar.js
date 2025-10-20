@@ -122,6 +122,10 @@ const Dosar = sequelize.define(
     termen_contestatie: {
       type: Sequelize.DATE,
       allowNull: true
+    },
+    autor_necunoscut: {
+      type: Sequelize.INTEGER,
+      allowNull: true
     }
   },
   {

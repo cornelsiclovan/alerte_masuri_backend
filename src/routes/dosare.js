@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get("/", isAuth, dosarController.getDosare);
 router.get("/dosareCuAc", isAuth, dosarController.getDosareCuAc);
+router.get("/dosareCuAn", isAuth, dosarController.getDosareCuAn);
 
 router.get("/dosareCuAcPeProcuror", isAuth, dosarController.getNrDosareCuAcPeProcuror);
 
@@ -24,6 +25,7 @@ router.post("/cleanDosare", isAuth, dosarController.cleanDataBaseDosar);
 router.post("/cleanSechestru", isAuth, dosarController.cleanDataBaseSechestru);
 router.post("/cleanDosareCuAc", isAuth, dosarController.cleanDataBaseCuAc);
 router.post("/cleanContestatii", isAuth, dosarController.cleanDataBaseContestatii);
+router.post("/cleanDosareCuAn", isAuth, dosarController.cleanDataBaseCuAn)
 
 router.patch("/:dosarId", isAuth, dosarController.editDosar);
 

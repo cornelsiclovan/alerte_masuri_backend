@@ -261,7 +261,7 @@ exports.addIncarcatura = async (req, res, next) => {
       where: { id_procuror: req.body.id_procuror },
     });
 
-    if(id_procuror=127) {}
+    if (id_procuror = 127) { }
 
     let dosareCuAc = await Dosar.findAll({ where: queryObject });
     let dosareIntrate = await Dosar.findAll({ where: queryObjectIntrate });
@@ -274,19 +274,32 @@ exports.addIncarcatura = async (req, res, next) => {
       dosareCuAc.length == 0
     ) {
       //UPP
-      console.log("upp 1")
+      //console.log("upp 1")
       addUpp = 1;
     }
 
     if (req.body.invest_proprie === "True" && dosareIntrate && dosareIntrate.length == 0) {
       //UPP
-      console.log("upp 1");
+
       addUpp = 1;
     } else {
       addUpp = 0;
     }
 
     if (!incarcatura && dosareCuAc && dosareCuAc.length == 0) {
+
+      console.log(req.body.numar_dosar);
+      console.log(req.body.numar_fost);
+      console.log(req.body.id_procuror);
+
+      await Dosar.create({
+        id_dosar: req.body.id,
+        numar: req.body.numar_dosar,
+        numar_fost: req.body.numar_fost,
+        procurorId: req.body.id_procuror,
+        autor_necunoscut: 1
+      });
+
       incarcatura = await Incarcatura.create({
         id_procuror: req.body.id_procuror,
         number_dos_cu_ac: 0,
@@ -294,9 +307,20 @@ exports.addIncarcatura = async (req, res, next) => {
         upp: addUpp,
       });
 
-      
+
     } else if (dosareCuAc && dosareCuAc.length == 0) {
-      
+
+      console.log(req.body.numar_dosar);
+      console.log(req.body.numar_fost)
+      console.log(req.body.id_procuror);
+
+      await Dosar.create({
+        id_dosar: req.body.id,
+        numar: req.body.numar_dosar,
+        numar_fost: req.body.numar_fost,
+        procurorId: req.body.id_procuror,
+        autor_necunoscut: 1
+      });
 
       incarcatura.number_dos_cu_an = +incarcatura.number_dos_cu_an + 1;
       incarcatura.upp = +incarcatura.upp + addUpp;
@@ -329,7 +353,7 @@ exports.addUpp = async (req, res, next) => {
       upp: req.body.nr_upp,
     });
 
-    if(upp) {
+    if (upp) {
       res.status(200).json({
         upp: upp,
       });
