@@ -21,6 +21,7 @@ const IndrumatorTask = require("./src/models/indrumator_task");
 const Indrumator = require("./src/models/indrumator");
 const TaskType = require("./src/models/task_type");
 const Stats = require("./src/models/stat");
+const SolutionateLunarPeFapte = require("./src/models/solutionate_lunar_pe_fapte");
 
 
 const partsAc = require("./src/models/partAc");
@@ -50,6 +51,7 @@ const indrumatorRoutes = require("./src/routes/indrumator");
 const taskRoutes = require("./src/routes/task");
 const taskTypeRoutes = require("./src/routes/task_type");
 const statsRoutes = require('./src/routes/stat');
+const solutionateLunarPeFapteRoutes = require('./src/routes/solutionate_lunar_pe_fapte');
 
 
 
@@ -86,6 +88,7 @@ app.use("/infractiuni", infractiuniRoutes);
 app.use("/pedepse", pedepseRoutes);
 app.use("/dateDosareSolutionate", dateDosareSolutionateRoutes);
 app.use("/solutionateLunar", solutionateLunarRoutes);
+app.use("/solutionateLunarPeFapte", solutionateLunarPeFapteRoutes);
 app.use("/doings", doingRoutes);
 app.use("/parts", partRoutes);
 app.use("/file", fileRoutes);
