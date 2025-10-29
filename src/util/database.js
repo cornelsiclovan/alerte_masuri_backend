@@ -3,8 +3,8 @@ const Sequelize = require("sequelize");
 const sequelize = new Sequelize(
   "alert_ar_sech_cj",
   "root",
-  "",
-  {
+  process.env.MYSQL_PASSWORD,  
+  { 
     dialect: "mysql",
     host: "localhost",
     timezone: "+00:00",
@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
   {
     charset: "utf8",
     collate: "utf8_unicode_ci",
-  },
+  },  
 );
 
 module.exports = sequelize;

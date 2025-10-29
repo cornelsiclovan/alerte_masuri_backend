@@ -125,7 +125,8 @@ const Dosar = sequelize.define(
     },
     autor_necunoscut: {
       type: Sequelize.INTEGER,
-      allowNull: true
+      allowNull: true,
+      defaultValue: 0
     }
   },
   {
