@@ -1,9 +1,9 @@
 const Sequelize = require("sequelize");
-
+//test
 const sequelize = new Sequelize(
   "alert_ar_sech_cj",
   "root",
-  process.env.MYSQL_PASSWORD,  
+  process.env.MYSQL_PASSWORD,    
   { 
     dialect: "mysql",
     host: "localhost",
