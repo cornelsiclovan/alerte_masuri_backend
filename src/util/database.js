@@ -1,4 +1,6 @@
 const Sequelize = require("sequelize");
+const dotenv = require("dotenv");
+dotenv.config();
 //test
 const sequelize = new Sequelize(
   "alert_ar_sech_cj",
